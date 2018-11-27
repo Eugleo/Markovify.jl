@@ -13,7 +13,7 @@ Tokens = Array{Array{SubString{String}, 1}, 1}
 SupTokens = Array{String, 1}
 
 function tokenize(text; func=letters)
-    return func(text):: Tokens
+    return func(text)
 end
 
 function to_lines(text) :: SupTokens
@@ -34,13 +34,13 @@ function to_words(tokens; keeppunctuation=true) :: Tokens
     return [split(token, rule; keepempty=false) for token in tokens]
 end
 
-function cleanup(suptokens; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t") :: SupTokens
+function cleanup(suptokens; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
     cleanup_token(token) = filter(c -> !(c in badchars), token)
     return [
         [
-            cleanup_token(token; badchars=badchars)
+            cleanup_token(token)
             for token in tokens
-            if cleanup_token(token; badchars=badchars) != ""
+            if cleanup_token(token) != ""
         ]
         for tokens in suptokens
     ]
