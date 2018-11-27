@@ -1,38 +1,53 @@
 module Tokenizer
 
-export tokenize, spliton_letters, spliton_sentences, spliton_words, WORDS, LETTERS, LINES
+export tokenize,
+       to_lines,
+       to_sentences,
+       to_letters,
+       cleanup,
+       words,
+       letters,
+       lines
 
-function tokenize(text; fs=WORDS)
-    return helper(fs, text)
+Tokens = Array{Array{SubString{String}, 1}, 1}
+SupTokens = Array{String, 1}
+
+function tokenize(text; func=letters)
+    return func(text):: Tokens
 end
 
-function helper(fs, x)
-    if fs == []
-        return x
-    end
-    return helper(fs[2:end], fs[1](x))
+function to_lines(text) :: SupTokens
+    return split(text, "\n")
 end
 
-function cleanup(s)
-    return filter(c -> !(c in "\n-_()[]{}<>–—\$=\'\"„“\r\t"), s)
-end
-
-function spliton_sentences(text)
+function to_sentences(text) :: SupTokens
     rule = r"((?<=[.])\s*(?=[A-Z]))|((?<=[?!])\s*)"
     split(text, rule; keepempty=false)
 end
 
-function spliton_words(text; keeppunctuation=true)
+function to_letters(tokens) :: Tokens
+    return [split(token, "") for token in tokens]
+end
+
+function to_words(tokens; keeppunctuation=true) :: Tokens
     rule = if keeppunctuation r"\s+" else r"\W+" end
-    split(text, rule; keepempty=false)
+    return [split(token, rule; keepempty=false) for token in tokens]
 end
 
-function spliton_letters(text)
-    split(text, "")
+function cleanup(suptokens; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t") :: SupTokens
+    cleanup_token(token) = filter(c -> !(c in badchars), token)
+    return [
+        [
+            cleanup_token(token; badchars=badchars)
+            for token in tokens
+            if cleanup_token(token; badchars=badchars) != ""
+        ]
+        for tokens in suptokens
+    ]
 end
 
-LETTERS = [spliton_sentences, x -> map(spliton_letters, x), s -> map(ws -> filter(p->p!="", map(cleanup, ws)), s)]
-WORDS = [spliton_sentences, s -> map(spliton_words, s), s -> map(ws -> map(cleanup, ws), s)]
-LINES = [x -> split(x, "\n"), x -> map(spliton_letters, x), s -> map(ws -> filter(p->p!="", map(cleanup, ws)), s)]
+letters = cleanup ∘ to_letters ∘ to_sentences
+lines = cleanup ∘ to_letters ∘ to_lines
+words = cleanup ∘ to_words ∘ to_sentences
 
 end
