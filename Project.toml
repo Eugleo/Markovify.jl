@@ -1,0 +1,6 @@
+authors = ["Evžen Wybitul <wybitul.evzen@gmail.com>"]
+name = "MarkovChains"
+uuid = "6ac3ccb4-f24b-11e8-21c2-8d35e1741f38"
+version = "0.1.0"
+
+[deps]
