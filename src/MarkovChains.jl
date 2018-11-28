@@ -7,7 +7,7 @@ struct Model
     body::Dict{Array{Union{Symbol, String}}, Dict{Union{String, Symbol}, Int}}
 end
 
-function combine(chain::Chain, others::Chain...)
+function combine(chain::Model, others::Model...)
     nodes = merge(chain.nodes for chain in others)
     return Model(chain.order, nodes)
 end
@@ -21,7 +21,7 @@ function build(suptokens; order=2, weight=stdweight)
     begin_sequence = begseq(order)
     for incomplete_tokens in suptokens
         tokens = [begin_sequence; incomplete_tokens; [:end]]
-        for i in 1:(length(tokens_complete) - order)
+        for i in 1:(length(tokens) - order)
             state = tokens[i:i+order-1]
             token = tokens[i+order]
             token_counts = get!(nodes, state, Dict())
@@ -31,7 +31,10 @@ function build(suptokens; order=2, weight=stdweight)
     return Model(order, nodes)
 end
 
-function walk(model)
+function walk(model, init_state=nothing)
+    state = if init_state != nothing init_state else begseq(model.order) end
+    accum = if init_state != nothing Array(init_state) else [] end
+
     function helper(state, accum)
         token = next_token(model, state)
         if token == :end
@@ -40,7 +43,7 @@ function walk(model)
         return helper([state[2:end]; [token]], push!(accum, token))
     end
 
-    return helper(begseq(model.order), [])
+    return helper(state, accum)
 end
 
 function rand_walk(model)
@@ -62,20 +65,6 @@ function rand_walk(model)
         end
         push!(result, following)
         current_state = rand(helper(vcat(current_state[2:end], [following])))
-    end
-    return result
-end
-
-function walk(model, init_state)
-    current_state = init_state
-    result = copy(init_state)
-    while true
-        following = next_token(model, current_state)
-        if following == :end
-            break;
-        end
-        push!(result, following)
-        current_state = vcat(current_state[2:end], [following])
     end
     return result
 end
