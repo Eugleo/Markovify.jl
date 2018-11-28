@@ -25,7 +25,7 @@ function build(suptokens; order=2, weight=stdweight)
             state = tokens[i:i+order-1]
             token = tokens[i+order]
             token_counts = get!(nodes, state, Dict())
-            token_counts[token] = get(token_counts, token, 0) +  weight(state, token)
+            token_counts[token] = get(token_counts, token, 0) + weight(state, token)
         end
     end
     return Model(order, nodes)
