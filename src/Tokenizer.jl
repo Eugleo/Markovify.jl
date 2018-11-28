@@ -37,11 +37,7 @@ end
 function cleanup(suptokens; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
     cleanup_token(token) = filter(c -> !(c in badchars), token)
     return [
-        [
-            cleanup_token(token)
-            for token in tokens
-            if cleanup_token(token) != ""
-        ]
+        [cleanup_token(token) for token in tokens if cleanup_token(token) != ""]
         for tokens in suptokens
     ]
 end

@@ -80,7 +80,9 @@ end
 
 function state_with_beginning(model, tokens; strict=false)
     if length(tokens) > model.order
-        message = "The length of the initial state must be equal to or lower than the order of the model (i.e. $(model.order))"
+        message =
+            "The length of the initial state must be equal" *
+            "to or lower than the order of the model (i.e. $(model.order))"
         throw(DomainError(tokens, message))
     end
 
