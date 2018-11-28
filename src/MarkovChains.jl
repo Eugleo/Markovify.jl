@@ -4,7 +4,7 @@ export build, walk, combine
 
 struct Model
     order::Int
-    body::Dict{Array{Union{Symbol, String}}, Dict{Union{String, Symbol}, Int}}
+    nodes::Dict{Array{Union{Symbol, String}}, Dict{Union{String, Symbol}, Int}}
 end
 
 function combine(chain::Model, others::Model...)
@@ -31,24 +31,19 @@ function build(suptokens; order=2, weight=stdweight)
     return Model(order, nodes)
 end
 
-function walk(model, init_state=nothing)
-    state = if init_state != nothing init_state else begseq(model.order) end
-    accum = if init_state != nothing Array(init_state) else [] end
-
-    function helper(state, accum)
-        token = next_token(model, state)
-        if token == :end
-            return accum
-        end
-        return helper([state[2:end]; [token]], push!(accum, token))
-    end
-
-    return helper(state, accum)
+function walk(model)
+    return walker(model, begseq(model.order), [])
 end
 
-function rand_walk(model)
+function walk(model, init_state)
+    return walker(model, init_state, init_state)
+end
+
+function states_with_suffix(model, init_suffix)
+    hassuffix(ar, suffix) = ar[end-length(suffix)+1:end] == suffix
+
     function helper(suffix)
-        states = [k for k in keys(model.body) if hassuffix(k, suffix)]
+        states = [k for k in keys(model.nodes) if hassuffix(k, suffix)]
         if (length(states) > 1) || (length(suffix) <= 1)
             return states
         else
@@ -56,20 +51,36 @@ function rand_walk(model)
         end
     end
 
-    current_state = begseq(model.order)
-    result = []
-    while true
-        following = next_token(model, current_state)
-        if following == :end
-            break;
+    return helper(init_suffix)
+end
+
+function walk2(model)
+    newstate = rand ∘ (suf -> states_with_suffix(model, suf)) ∘ append_token
+    return walker(model, begseq(model.order), [], newstate)
+end
+
+function walk2(model, init_state)
+    newstate = rand ∘ (suf -> states_with_suffix(model, suf)) ∘ append_token
+    return walker(model, init_state, init_state, newstate)
+end
+
+append_token(state, token) = [state[2:end]; [token]]
+
+function walker(model, init_state, init_accum, newstate=append_token)
+    function helper(state, accum)
+        token = next_token(model, state)
+        if token == :end
+            return accum
         end
-        push!(result, following)
-        current_state = rand(helper(vcat(current_state[2:end], [following])))
+        return helper(newstate(state, token), push!(accum, token))
     end
-    return result
+
+    return helper(init_state, init_accum)
 end
 
 function gen_init_state(model, tokens)
+    hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
+
     function helper(prefix, as)
         if prefix == []
             return nothing
@@ -92,9 +103,6 @@ function gen_init_state(model, tokens)
     end
 end
 
-hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
-hassuffix(ar, suffix) = ar[end-length(suffix)+1:end] == suffix
-
 function next_token(model, state)
     randkey(model.nodes[state])
 end
@@ -114,5 +122,4 @@ function indexof(array, n)
     return length(array) + 1
 end
 
-end
 end
