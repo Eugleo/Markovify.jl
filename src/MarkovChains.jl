@@ -1,6 +1,6 @@
 module MarkovChains
 
-export getmodel, walk, combine
+export build, walk, combine
 
 struct Model
     order::Int
@@ -16,12 +16,11 @@ begseq(n) = fill(:begin, n)
 
 stdweight(state, token) = 1
 
-function build_model(suptokens; order=2, weight=stdweight)
+function build(suptokens; order=2, weight=stdweight)
     nodes = Dict()
-    begkey = begseq(order)
-    nodes[begkey] = Dict()
+    begin_sequence = begseq(order)
     for incomplete_tokens in suptokens
-        tokens = [begkey; incomplete_tokens; [:end]]
+        tokens = [begin_sequence; incomplete_tokens; [:end]]
         for i in 1:(length(tokens_complete) - order)
             state = tokens[i:i+order-1]
             token = tokens[i+order]
@@ -41,7 +40,7 @@ function walk(model)
             break;
         end
         push!(result, following)
-        current_state = vcat(current_state[2:end], [following])
+        current_state = [current_state[2:end]; [following]]
     end
     return result
 end
@@ -106,7 +105,6 @@ function gen_init_state(model, tokens)
     end
 end
 
-
 hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
 hassuffix(ar, suffix) = ar[end-length(suffix)+1:end] == suffix
 
@@ -120,13 +118,14 @@ function weighted_rand(sourcedict)
     return copy(collect(keys(sourcedict)))[putinto(r, possibilities)]
 end
 
-function putinto(n, ar)
-    for (i, el) in enumerate(ar)
-        if n < el
+function indexof(array, n)
+    for i in 1:length(array)
+        if array[i] >= n
             return i
         end
     end
-    return length(ar)
+    return length(array) + 1
 end
 
+end
 end
