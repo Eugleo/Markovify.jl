@@ -2,37 +2,34 @@ module MarkovChains
 
 export getmodel, walk, combine
 
-mutable struct Model
+struct Model
     order::Int
     body::Dict{Array{Union{Symbol, String}}, Dict{Union{String, Symbol}, Int}}
 end
 
-function combine(model1, model2)
-    body = merge(model1.body, model2.body)
-    return Model(model1.order, body)
+function combine(chain::Chain, others::Chain...)
+    nodes = merge(chain.nodes for chain in others)
+    return Model(chain.order, nodes)
 end
 
 begseq(n) = fill(:begin, n)
 
-stdweight(state, current_word) = 1
+stdweight(state, token) = 1
 
-function getmodel(loltokens; order=2, weightf=stdweight)
-    model = Model(order, Dict())
+function build_model(suptokens; order=2, weight=stdweight)
+    nodes = Dict()
     begkey = begseq(order)
-    model.body[begkey] = Dict()
-    for tokens in loltokens
-        complete = [begkey; tokens; [:end]]
-        for i in 1:(length(complete) - order)
-            state = complete[i:i+order-1]
-            following = complete[i+order]
-            statedict = get!(model.body, state, Dict())
-            if !haskey(statedict, following)
-                statedict[following] = 0
-            end
-            statedict[following] += weightf(state, following)
+    nodes[begkey] = Dict()
+    for incomplete_tokens in suptokens
+        tokens = [begkey; incomplete_tokens; [:end]]
+        for i in 1:(length(tokens_complete) - order)
+            state = tokens[i:i+order-1]
+            token = tokens[i+order]
+            token_counts = get!(nodes, state, Dict())
+            token_counts[token] = get(token_counts, token, 0) +  weight(state, token)
         end
     end
-    return model
+    return Model(order, nodes)
 end
 
 function walk(model)
