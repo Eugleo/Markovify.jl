@@ -1,6 +1,6 @@
 module MarkovChains
 
-export build, walk, combine
+export build, walk, walk2, combine, state_with_beginning
 
 struct Model
     order::Int
@@ -78,26 +78,32 @@ function walker(model, init_state, init_accum, newstate=append_token)
     return helper(init_state, init_accum)
 end
 
-function gen_init_state(model, tokens)
-    hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
-
-    function helper(prefix, as)
-        if prefix == []
-            return nothing
-        end
-        if any(hasprefix(a, prefix) for a in as)
-            return prefix
-        else
-            return helper(prefix[1:end-1], as)
-        end
+function state_with_beginning(model, tokens; strict=false)
+    if length(tokens) > model.order
+        message = "The length of the initial state must be equal to or lower than the order of the model (i.e. $(model.order))"
+        throw(DomainError(tokens, message))
     end
 
-    if haskey(model.body, [begseq(model.order-length(tokens));tokens])
+    if haskey(model.nodes, [begseq(model.order - length(tokens)); tokens])
         return tokens
     end
-    valid_prefix = helper(tokens, collect(keys(model.body)))
-    if valid_prefix != nothing
-        return rand([k for k in keys(model.body) if hasprefix(k, valid_prefix)])
+
+    hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
+    function helper(prefix, states)
+        if prefix == [] return nothing end
+        states_with_prefix = (st for st in states if hasprefix(st, prefix))
+        if !isempty(states_with_prefix)
+            return states_with_prefix
+        elseif strict
+            return nothing
+        else
+            return helper(prefix[1:end-1], states)
+        end
+    end
+
+    valid_states = helper(tokens, keys(model.nodes))
+    if valid_states != nothing
+        return rand(collect(valid_states))
     else
         return nothing
     end
