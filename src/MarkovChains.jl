@@ -32,17 +32,15 @@ function build(suptokens; order=2, weight=stdweight)
 end
 
 function walk(model)
-    current_state = begseq(model.order)
-    result = []
-    while true
-        following = next_state(model, current_state)
-        if following == :end
-            break;
+    function helper(state, accum)
+        token = next_token(model, state)
+        if token == :end
+            return accum
         end
-        push!(result, following)
-        current_state = [current_state[2:end]; [following]]
+        return helper([state[2:end]; [token]], push!(accum, token))
     end
-    return result
+
+    return helper(begseq(model.order), [])
 end
 
 function rand_walk(model)
@@ -58,7 +56,7 @@ function rand_walk(model)
     current_state = begseq(model.order)
     result = []
     while true
-        following = next_state(model, current_state)
+        following = next_token(model, current_state)
         if following == :end
             break;
         end
@@ -72,7 +70,7 @@ function walk(model, init_state)
     current_state = init_state
     result = copy(init_state)
     while true
-        following = next_state(model, current_state)
+        following = next_token(model, current_state)
         if following == :end
             break;
         end
@@ -108,8 +106,8 @@ end
 hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
 hassuffix(ar, suffix) = ar[end-length(suffix)+1:end] == suffix
 
-function next_state(model, current_state)
-    weighted_rand(model.body[current_state])
+function next_token(model, state)
+    randkey(model.nodes[state])
 end
 
 function randkey(dict)
