@@ -112,10 +112,10 @@ function next_state(model, current_state)
     weighted_rand(model.body[current_state])
 end
 
-function weighted_rand(sourcedict)
-    possibilities = accumulate(+, collect(values(sourcedict)))
-    r = rand() * possibilities[end]
-    return copy(collect(keys(sourcedict)))[putinto(r, possibilities)]
+function randkey(dict)
+    possibility_weights = accumulate(+, collect(values(dict)))
+    index = indexof(possibility_weights, rand() * possibility_weights[end])
+    return collect(keys(dict))[index]
 end
 
 function indexof(array, n)
