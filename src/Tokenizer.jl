@@ -9,36 +9,36 @@ export tokenize,
        letters,
        lines
 
-Tokens = Array{Array{SubString{String}, 1}, 1}
-SupTokens = Array{String, 1}
+Tokens{T} = Vector{T}
+SupTokens{T} = Vector{Vector{T}}
 
 function tokenize(text; func=letters)
     return func(text)
 end
 
-function to_lines(text) :: SupTokens
+function to_lines(text)
     return split(text, "\n")
 end
 
-function to_sentences(text) :: SupTokens
+function to_sentences(text)
     rule = r"((?<=[.])\s*(?=[A-Z]))|((?<=[?!])\s*)"
     split(text, rule; keepempty=false)
 end
 
-function to_letters(tokens) :: Tokens
+function to_letters(tokens::Tokens{String})
     return [split(token, "") for token in tokens]
 end
 
-function to_words(tokens; keeppunctuation=true) :: Tokens
+function to_words(tokens::Tokens{String}; keeppunctuation=true)
     rule = if keeppunctuation r"\s+" else r"\W+" end
     return [split(token, rule; keepempty=false) for token in tokens]
 end
 
-function cleanup(suptokens; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
+function cleanup(suptokens::SupTokens{String}; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
     cleanup_token(token) = filter(c -> !(c in badchars), token)
     return [
-        [cleanup_token(token) for token in tokens if cleanup_token(token) != ""]
-        for tokens in suptokens
+        [cleanup_token(token) for token in suptoken if cleanup_token(token) != ""]
+        for suptoken in suptokens
     ]
 end
 
