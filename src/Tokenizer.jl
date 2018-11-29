@@ -44,6 +44,8 @@ The function tries to be as smart as possible. For example, the string
 although it has two dots.
 """
 function to_sentences(text)
+    # Split on (optional) whitespace if it's preceeded by a dot
+    # and if it's followed by a capital letter
     rule = r"((?<=[.])\s*(?=[A-Z]))|((?<=[?!])\s*)"
     split(text, rule; keepempty=false)
 end
@@ -76,8 +78,11 @@ Remove all characters that are in `badchars` from all tokens in `suptokens`.
 """
 function cleanup(suptokens::Vector{Vector{String}}; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
     cleanup_token(token) = filter(c -> !(c in badchars), token)
+
     return [
+        # A list of non-empty cleaned-up tokens
         [cleanup_token(token) for token in suptoken if cleanup_token(token) != ""]
+        # The list is built for every item in suptokens
         for suptoken in suptokens
     ]
 end
