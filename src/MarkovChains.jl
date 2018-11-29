@@ -87,11 +87,18 @@ function build(suptokens::Vector{Vector{Token{Any}}}; order=2, weight=stdweight)
     nodes = Dict()
     begin_sequence = begseq(order)
     for incomplete_tokens in suptokens
+        # Tokens looks like: :begin :begin ... :begin token ... token :end
+        # There will thus be a state consisting of only :begins
+        # then a state with :begins and only one token etc.
         tokens = [begin_sequence; incomplete_tokens; [:end]]
         for i in 1:(length(tokens) - order)
+            # Current state has a length=order
             state = tokens[i:i+order-1]
+            # The token after the current state
             token = tokens[i+order]
             token_counts = get!(nodes, state, Dict())
+            # Add a new occurence (possible with added weight)
+            # of the token after the state
             token_counts[token] = get(token_counts, token, 0) + weight(state, token)
         end
     end
@@ -135,11 +142,16 @@ the number of such states is 1 (or 0), the function shortens the suffix
 function states_with_suffix(model::Model{T}, init_suffix::Vector{T}) where T
     hassuffix(ar, suffix) = ar[end-length(suffix)+1:end] == suffix
 
+    # If there is more than one state with given suffix, return the array of them
+    # if not, cut the first token out of the suffix and try again
     function helper(suffix)
         states = [k for k in keys(model.nodes) if hassuffix(k, suffix)]
+        # Either we got than one valid state (yay!)
+        # or the suffix is already so short that we have to end
         if (length(states) > 1) || (length(suffix) <= 1)
             return states
         else
+            # Shorten the suffix and try again
             return helper(suffix[2:end])
         end
     end
@@ -164,6 +176,11 @@ is reached.
 See also: [`walk`](@ref).
 """
 function walk2(model::Model{Any})
+    # First, do the normal append_token operation
+    # Then choose all the states that are similar to the new state
+    # but have more possible following tokens than only one
+    # (or choose the new state itself if it is possibly followed by more than one token
+    # And then, chose a random state from this list
     newstate = rand ∘ (suf -> states_with_suffix(model, suf)) ∘ append_token
     return walker(model, begseq(model.order), [], newstate)
 end
@@ -184,6 +201,11 @@ token `:end` is reached.
 See also: [`walk`](@ref).
 """
 function walk2(model::Model{T}, init_state::State{T}) where T
+    # First, do the normal append_token operation
+    # Then choose all the states that are similar to the new state
+    # but have more possible following tokens than only one
+    # (or choose the new state itself if it is possibly followed by more than one token
+    # And then, chose a random state from this list
     newstate = rand ∘ (suf -> states_with_suffix(model, suf)) ∘ append_token
     return walker(model, init_state, init_state, newstate)
 end
@@ -232,6 +254,7 @@ with `tokens`, the function shortens the tokens (cuts the last token)
 to lower the requirements and tries to find some valid state again.
 """
 function state_with_beginning(model::Model{T}, tokens::Vector{Token{T}}; strict=false) where T
+    # The token sequence must be at most as long as the model's state
     if length(tokens) > model.order
         message =
             "The length of the initial state must be equal" *
@@ -239,17 +262,23 @@ function state_with_beginning(model::Model{T}, tokens::Vector{Token{T}}; strict=
         throw(DomainError(tokens, message))
     end
 
+    # If the tokens are already a valid state, just return them
+    # if the token sequence is too short, just fill in :begin to make a valid state
     if haskey(model.nodes, [begseq(model.order - length(tokens)); tokens])
-        return tokens
+        return [begseq(model.order - length(tokens)); tokens]
     end
 
     hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
+    # Try to cut out the last element of the token sequence
+    # in order to find a valid state with this given prefix
     function helper(prefix, states)
         if prefix == [] return nothing end
         states_with_prefix = (st for st in states if hasprefix(st, prefix))
         if !isempty(states_with_prefix)
+            # Return the non-empty iterator of valid states with iven prefix
             return states_with_prefix
         elseif strict
+            # We didn't find any states with given prefix
             return nothing
         else
             return helper(prefix[1:end-1], states)
@@ -273,6 +302,7 @@ are skewed by their individual values in the `TokenOccurences` dictionary
 of the current `state`, that is obtained from the `model`.
 """
 function next_token(model::Model{T}, state::State{T}) where T
+    # Choose a random token coming after state
     randkey(model.nodes[state])
 end
 
@@ -283,7 +313,13 @@ Return a random key from `dict`. The probabilities of individual keys
 getting chosen are skewed by their respective values.
 """
 function randkey(dict::AbstractDict{Any, Number})
+    # Accumulate is similat to scanl in Haskell
+    # It folds the array with the given function and returns
+    # a list of all intermediate values
     possibility_weights = accumulate(+, collect(values(dict)))
+    # Generate a random index in range 1:length(keys(dict))
+    # by generating a random number and then placing it into
+    # a sorted array of accomulated occurence sums
     index = indexof(possibility_weights, rand() * possibility_weights[end])
     return collect(keys(dict))[index]
 end
@@ -300,6 +336,7 @@ function indexof(array::AbstractVector{T}, n::T) where T
             return i
         end
     end
+    # If we didn't return yet, n is bigger than every element of array
     return length(array) + 1
 end
 
