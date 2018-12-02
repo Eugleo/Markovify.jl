@@ -16,7 +16,7 @@ Jinými slovy, stav v okamžiku ``i`` závisí pouze na stavu v předchozím oka
 Tato takzvaná *markovovská vlastnost* dala Markovově *řetězci* jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého.
 
 !!! tip "Příklad"
-    Mějme pravděpodobnostní systém, který popisuje vývoj počasí pomocí dvou stavů: *zataženo* (E) a *jasno* (A). Řekněme, že se snažíme zjistit, s jakou pravděpodobností bude zítra zataženo, neboli hledáme ``P\left[ ``X_{i+1}``=\text{E} \right]``.
+    Mějme pravděpodobnostní systém, který popisuje vývoj počasí pomocí dvou stavů: *zataženo* (E) a *jasno* (A). Řekněme, že se snažíme zjistit, s jakou pravděpodobností bude zítra zataženo, neboli hledáme ``P\left[ X_{i+1}=\text{E} \right]``.
 
     Pokud bychom se snažili namodelovat tento systém bez jakékoli znalosti dnešního počasí, museli bychom si o druhu zítřejšího počasí prostě hodit mincí: nemáme totiž jiný způsob, jak lépe odhadnout, jak zítra bude.
 
