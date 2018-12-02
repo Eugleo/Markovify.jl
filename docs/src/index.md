@@ -2,7 +2,7 @@
 
 Generování náhodného textu na bázi textu trénovacího.
 
-!!! note
+!!! note "Poznámka"
     V této sekci jsou popsány důvody, které vedly ke vzniku tohto balíčku. Konkrétní funkce jsou zdokumentovány v oddílu Library, konkrétně [Public Documentation](@ref) a [Internal Documentation](@ref).
 
 ## K čemu tento balík slouží
