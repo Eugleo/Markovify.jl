@@ -7,7 +7,7 @@ makedocs(
     authors = "Evžen Wybitul",
     pages = [
         "Domovská stránka" => "index.md",
-        "Osvětlení" => [
+        "Vysvětlení" => [
             "Popis funkce" => "function.md",
             "Popis implementace" => "implementation.md"
         ],
