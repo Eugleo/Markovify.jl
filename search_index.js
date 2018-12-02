@@ -105,7 +105,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "internals/#MarkovChains.build-Tuple{Array{Array{Union{Symbol, #s13} where #s13,1},1}}",
+    "location": "internals/#MarkovChains.build-Tuple{Array{Array{Any,1},1}}",
     "page": "Interní symboly (EN)",
     "title": "MarkovChains.build",
     "category": "method",
@@ -113,7 +113,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "internals/#MarkovChains.combine-Union{Tuple{T}, Tuple{Model{T},Vararg{Model{T},N} where N}} where T",
+    "location": "internals/#MarkovChains.combine-Tuple{MarkovChains.Model,Vararg{MarkovChains.Model,N} where N}",
     "page": "Interní symboly (EN)",
     "title": "MarkovChains.combine",
     "category": "method",
@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Interní symboly (EN)",
     "title": "MarkovChains.Model",
     "category": "type",
-    "text": "The datastructure of the Markov chain. Encodes all the different states and the probabilities of going from one to another as a dictionary. The keys are the states, the values are the respective TokenOccurences dictionaries. Those are dictionaries which say how many times was a token found immediately after the state.\n\nFields\n\norder is the number of tokens the State\nnodes is a dictionary pairing State and its respective TokenOccurences dictionary.\n\n\n\n\n\n"
+    "text": "The datastructure of the Markov chain. Encodes all the different states and the probabilities of going from one to another as a dictionary. The keys are the states, the values are the respective TokenOccurences dictionaries. Those are dictionaries which say how many times was a token found immediately after the state.\n\nFields\n\norder is the number of tokens the State\nnodes is a dictionary pairing State and its respective\n\nTokenOccurences dictionary.\n\n\n\n\n\n"
 },
 
 {
