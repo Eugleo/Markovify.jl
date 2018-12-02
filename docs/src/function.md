@@ -16,17 +16,17 @@ Jinými slovy, stav v okamžiku ``i`` závisí pouze na stavu v předchozím oka
 Tato takzvaná *markovovská vlastnost* dala Markovově *řetězci* jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého.
 
 !!! tip "Příklad"
-    Mějme pravděpodobnostní systém, který popisuje vývoj počasí pomocí dvou stavů: *zataženo* (E) a *jasno* (A). Řekněme, že se snažíme zjistit, z jakou pravděpodobností bude zítra zataženo.
+    Mějme pravděpodobnostní systém, který popisuje vývoj počasí pomocí dvou stavů: *zataženo* (E) a *jasno* (A). Řekněme, že se snažíme zjistit, s jakou pravděpodobností bude zítra zataženo, neboli hledáme ``P\left[ ``X_{i+1}``=\text{E} \right]``.
 
     Pokud bychom se snažili namodelovat tento systém bez jakékoli znalosti dnešního počasí, museli bychom si o druhu zítřejšího počasí prostě hodit mincí: nemáme totiž jiný způsob, jak lépe odhadnout, jak zítra bude.
 
-    Pokud využijeme znalost toho, jak je dnes, můžeme k namodelování stavu počasí použít Markovův řetezec. Víme totiž, že pokud je jeden den zataženo, je šance 70%, že další den už bude jasno. Je-li jasno, s pravděpodobností 60% bude další den také jasno (bydlíme v Kalifornii). Takový Markovův řetezec by se dal grafem znázornit takto (zdroj: Wikipedie):
+    Pokud ale využijeme znalost toho, jak je dnes, můžeme k namodelování stavu počasí použít Markovův řetězec. Zjistíme si, že pokud je jeden den zataženo, je šance 70%, že další den už bude jasno. Je-li naopak daný den jasno, s pravděpodobností 60% bude následující den také jasno (bydlíme v Kalifornii). Takový Markovův řetezec by se dal grafem znázornit takto (zdroj: Wikipedie):
 
     ![Znázornění Markovova řetězce grafem](assets/images/markov-weather.png)
 
-Pro úplnost dodáváme, že Markovův řetězec se dá kromě grafu popsat také *maticí pravděpodobností přechodu* ``P``, kde ``p_{ij}`` označuje pravděpodobnost přechodu v okamžiku ``n`` ze stavu ``i`` do stavu ``j``.
+Pro úplnost dodáváme, že Markovův řetězec se dá kromě grafu popsat také *maticí pravděpodobností přechodu* ``P``, kde ``p_{ij}`` označuje pravděpodobnost přechodu ze stavu ``i`` do stavu ``j``.
 
-Pojem Markovův řetězec se dá dále rozšířit o takzvaný *řád* (anglicky order). Stav v okamžiku ``i`` v Markovově řetězci o řádu ``r`` závisí na všech stavech ``X_{i-1}, X_{i-2}, \ldots, X_{i-r}``.
+Pojem Markovův řetězec se dá dále rozšířit o takzvaný *řád*. Stav v okamžiku ``i`` v Markovově řetězci o řádu ``r`` závisí na všech stavech ``X_{i-1}, X_{i-2}, \ldots, X_{i-r}``.
 
 ## Generování textu
 
@@ -52,7 +52,7 @@ Pokud máme k dispozici graf, je generování textu už velice jednoduché: zač
 
     začátek ``\longrightarrow`` AB ``\longrightarrow`` BA ``\longrightarrow`` AB ``\longrightarrow`` BA ``\longrightarrow`` AB ``\longrightarrow`` BD ``\longrightarrow`` konec
 
-    Výsledný text poté nebude prostým složením projitých stavů (neboť ty se částečně překrývaly), ale bude vypadat takto: "ABABABD".
+    Výsledný text poté nebude prostým složením stavů, které jsme prošli (neboť ty se částečně překrývaly), ale bude vypadat takto: "ABABABD".
 
 
 ----
