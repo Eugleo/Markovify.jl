@@ -13,7 +13,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Domovská stránka",
     "title": "MarkovChains.jl",
     "category": "section",
-    "text": "Generování náhodného textu na bázi textu trénovacího.note: Note\nV této sekci jsou popsány důvody, které vedly ke vzniku tohto balíčku. Konkrétní funkce jsou zdokumentovány v oddílu Library, konkrétně Public Documentation a Internal Documentation."
+    "text": "Generování náhodného textu na bázi textu trénovacího.note: Poznámka\nV této sekci jsou popsány důvody, které vedly ke vzniku tohto balíčku. Konkrétní funkce jsou zdokumentovány v oddílu Library, konkrétně Public Documentation a Internal Documentation."
 },
 
 {
@@ -45,15 +45,39 @@ var documenterSearchIndex = {"docs": [
     "page": "Popis funkce",
     "title": "Popis funkce",
     "category": "section",
-    "text": "note: Note\nTento text pojednává o obecném principu stojícímu za Markovovými řetězci a generováním textu z nich. Naopak implementaci tohoto obecného principu se věnuje oddíl Popis implementace."
+    "text": "note: Poznámka\nTento text pojednává o obecném principu stojícímu za Markovovými řetězci a generováním textu z nich. Naopak implementaci tohoto obecného principu se věnuje oddíl Popis implementace."
 },
 
 {
-    "location": "function/#Markovovy-řetězce-1",
+    "location": "function/#Markovův-řetězec-1",
     "page": "Popis funkce",
-    "title": "Markovovy řetězce",
+    "title": "Markovův řetězec",
     "category": "section",
-    "text": ""
+    "text": "Stacionární Markovův řetězec (dále Markovův řetězec) je uspořádaná posloupnost n náhodných proměnných X_1 X_2 ldots X_n.[1] Ty mohou nabývat jedné z konečné množiny hodnot; hodnotu náhodné proměnné X_i budeme značit x_i a nazveme ji stav v okamžiku i. Množinu všech možných stavů označíme jako stavový prostor. Pro všechny X_i (i1) platí, že:PleftX_i = x vert X_1=x_1 X_2=x_2 ldots X_i-1 = x_i-1right = PleftX_i = x vert X_i-1 = x_i-1rightJinými slovy, stav v okamžiku i závisí pouze na stavu v předchozím okamžiku.Tato takzvaná markovovská vlastnost dala Markovově řetězci jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého.tip: Příklad\nMějme pravděpodobnostní systém, který popisuje vývoj počasí pomocí dvou stavů: zataženo (E) a jasno (A). Řekněme, že se snažíme zjistit, z jakou pravděpodobností bude zítra zataženo.Pokud bychom se snažili namodelovat tento systém bez jakékoli znalosti dnešního počasí, museli bychom si o druhu zítřejšího počasí prostě hodit mincí: nemáme totiž jiný způsob, jak lépe odhadnout, jak zítra bude.Pokud využijeme znalost toho, jak je dnes, můžeme k namodelování stavu počasí použít Markovův řetezec. Víme totiž, že pokud je jeden den zataženo, je šance 70%, že další den už bude jasno. Je-li jasno, s pravděpodobností 60% bude další den také jasno (bydlíme v Kalifornii). Takový Markovův řetezec by se dal grafem znázornit takto (zdroj: Wikipedie):(Image: Znázornění Markovova řetězce grafem)Pro úplnost dodáváme, že Markovův řetězec se dá kromě grafu popsat také maticí pravděpodobností přechodu P, kde p_ij označuje pravděpodobnost přechodu v okamžiku n ze stavu i do stavu j.Pojem Markovův řetězec se dá dále rozšířit o takzvaný řád (anglicky order). Stav v okamžiku i v Markovově řetězci o řádu r závisí na všech stavech X_i-1 X_i-2 ldots X_i-r."
+},
+
+{
+    "location": "function/#Generování-textu-1",
+    "page": "Popis funkce",
+    "title": "Generování textu",
+    "category": "section",
+    "text": "Proces generování textu pomocí Markovova řetězce se skládá ze dvou částí:Vytvoření samotného řetězce na základě vstupního textu.\nProcházení vytvořeným grafem a postupné tvoření výstupu."
+},
+
+{
+    "location": "function/#Vytvoření-grafu-1",
+    "page": "Popis funkce",
+    "title": "Vytvoření grafu",
+    "category": "section",
+    "text": "Text se zpravidla modeluje řetězci o řádu 2, 3, nebo 4; obecně k. Stavový prostor bude tvořen všemi k-ticemi znaků, které se vyskytují ve vstupním textu: to budou vrcholy požadovaného grafu. Vyplatí se také nějak označit začátek a konec textu, třeba jako speciální stavy.Hrany (a jejich hodnoty) pak budou udávat, s jakou pravděpodobností se vyskytuje jedna k-tice znaků \"za\" jinou. Slovo \"za\" je v uvozovkách, neboť k-tice se překrývají a dvě následné k-tice se tedy liší pouze v jednom znaku.tip: Příklad\nMějme vstupní text \"ABABD\". Markovův řetězec o řádu 2 tohoto textu by se dal grafem znázornit takto:(Image: Znázornění druhého Markovova řetězce grafem)"
+},
+
+{
+    "location": "function/#Procházení-grafu-1",
+    "page": "Popis funkce",
+    "title": "Procházení grafu",
+    "category": "section",
+    "text": "Pokud máme k dispozici graf, je generování textu už velice jednoduché: začneme na jednom z vrcholů označených jako začátek a pak se pohybujeme po hranách, dokud nenarazíme na vrchol konec. Po hranách se pohybujeme náhodně, přičemž hrany svými hodnotami ovlivňují rozložení pravděpodobností přesunu z jednoho stavu do druhého.tip: Příklad\nPokud použijeme graf z minulého příkladu, generování textu by mohlo probíhat například takto:začátek longrightarrow AB longrightarrow BA longrightarrow AB longrightarrow BA longrightarrow AB longrightarrow BD longrightarrow konecVýsledný text poté nebude prostým složením projitých stavů (neboť ty částečně překrývaly), ale bude vypdat takto: \"ABABABD\".[1]: Existují také řetězce nestacionární, kterým se rozložení pravděpodobností mění ještě v závislosti na okamžiku i. Ty ale nejsou předmětem našeho zájmu, neboť slouží k modelování dynamičtějších systémů než je text."
 },
 
 {
@@ -69,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Popis implementace",
     "title": "Popis implementace",
     "category": "section",
-    "text": "note: Note\nTento text pojednává o obecném principu za Markovovými řetězci. Naopak implementaci tohoto obecného principu se věnuje oddíl Popis implementace."
+    "text": "note: Poznámka\nTento text pojednává o obecném principu za Markovovými řetězci. Naopak implementaci tohoto obecného principu se věnuje oddíl Popis implementace."
 },
 
 {
