@@ -3,7 +3,9 @@ using Documenter, MarkovChains, Tokenizer
 
 makedocs(
     sitename="MarkovChains.jl",
-     pages = [
+    assets=["assets/favicon.ico"],
+    authors = "Evžen Wybitul",
+    pages = [
         "Domovská stránka" => "index.md",
         "Osvětlení" => [
             "Popis funkce" => "function.md",
