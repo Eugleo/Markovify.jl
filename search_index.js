@@ -93,15 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Implementace",
     "title": "Popis implementace",
     "category": "section",
-    "text": "note: Poznámka\nTento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Naopak obecnému principu se věnuje oddíl Popis principu funkce."
-},
-
-{
-    "location": "implementation/#Generování-textu-1",
-    "page": "Implementace",
-    "title": "Generování textu",
-    "category": "section",
-    "text": "Rozložení textu na tokeny.\nTrénování modelu na základě tokenů.\nProcházení modelového grafu."
+    "text": "note: Poznámka\nTento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Naopak obecnému principu se věnuje oddíl Popis principu funkce.Generování textu se dá rozdělit na několik logických podcelků:Rozložení textu na tokeny.\nTrénování modelu na základě tokenů.\nProcházení modelového grafu."
 },
 
 {
