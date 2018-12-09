@@ -13,12 +13,12 @@ Token{T} = Union{Symbol, T}
 """
     State{T} = Vector{Token{T}}
 
-A state is a succession of tokens.
+A state is described by a succession of tokens.
 """
 State{T} = Vector{Token{T}}
 
 """
-    TokenOccurences{Token} = Dict{Union{Token, Symbol}, Int}
+    TokenOccurences{T} = Dict{Token{T}, Int}
 
 A dictionary pairing tokens (or special symbols `:begin` and `:end`) with
 the number of their respective occurences.
@@ -33,7 +33,7 @@ are the states, the values are the respective
 how many times was a token found *immediately* after the state.
 
 # Fields
-- `order` is the number of tokens the [`State`](@ref)
+- `order` is the number of tokens in a [`State`](@ref)
 - `nodes` is a dictionary pairing [`State`](@ref) and its respective
 [`TokenOccurences`](@ref) dictionary.
 """
@@ -43,13 +43,13 @@ struct Model{T}
 end
 
 """
-    function combine(chain::Model, others::Model...)
+    function combine(chain::Model{T}, others::Model{T}...) where T
 
 Return a Model which is a combination of all of the models provided. All of the
 arguments should have the same `order`. The nodes of all the Models are merged
 using the function `merge`.
 """
-function combine(chain::Model, others::Model...)
+function combine(chain::Model{T}, others::Model{T}...) where T
     nodes = merge(chain.nodes for chain in others)
     return Model(chain.order, nodes)
 end
@@ -75,7 +75,7 @@ function stdweight(state::State{T}, token::Token{T}) where T
 end
 
 """
-    build(suptokens::Vector{Vector{Token{T}}}; order=2, weight=stdweight)
+    build(suptokens::Vector{<:Vector{<:Token{<:Any}}}; order=2, weight=stdweight)
 
 Trains a Markov chain on an array of arrays of tokens (suptokens).
 Optionally an `order` of the chain can be supplied, that is
@@ -83,8 +83,8 @@ the number of tokens in one state. A weight function of general
 type `func(s::State{T}, t::Token{T})::Int` can be supplied to be used
 to bias the weights based on the state or token.
 """
-function build(suptokens::Vector{Vector{Token{Any}}}; order=2, weight=stdweight)
-    nodes = Dict()
+function build(suptokens::Vector{<:Vector{<:Token{<:T}}}; order=2, weight=stdweight) where T
+    nodes = Dict{State{T}, TokenOccurences{T}}()
     begin_sequence = begseq(order)
     for incomplete_tokens in suptokens
         # Tokens looks like: :begin :begin ... :begin token ... token :end
@@ -106,28 +106,20 @@ function build(suptokens::Vector{Vector{Token{Any}}}; order=2, weight=stdweight)
 end
 
 """
-    walk(model::Model)
-
-Return an array of tokens obtained by a random walk through the Markov chain.
-The walk starts at state `[:begin, :begin...]` (the length depends on
-the order of the supplied `model`) and ends once a special token `:end`
-is reached.
-
-See also: [`walk2`](@ref).
-"""
-function walk(model::Model{Any})
-    return walker(model, begseq(model.order), [])
-end
-
-"""
     walk(model::Model{T}[, init_state::State{T}]) where T
 
 Return an array of tokens obtained by a random walk through the Markov chain.
-The walk starts at state `init_state` and ends once a special
+The walk starts at state `init_state` if supplied, and at state
+`[:begin, :begin...]` (the length depends on
+the order of the supplied `model`) otherwise. The walk ends once a special
 token `:end` is reached.
 
 See also: [`walk2`](@ref).
 """
+function walk(model::Model{<:Any})
+    return walker(model, begseq(model.order), [])
+end
+
 function walk(model::Model{T}, init_state::State{T}) where T
     return walker(model, init_state, init_state)
 end
@@ -160,32 +152,6 @@ function states_with_suffix(model::Model{T}, init_suffix::Vector{T}) where T
 end
 
 """
-    walk2(model::Model{Any})
-
-Return an array of tokens obtained by a random walk through the Markov chain.
-When there is only one state following the current one (i.e. there is 100%
-chance that the state will become the next one), the function shortens
-the current `State` as to lower the requirements and obtain more randomness.
-The `State` gets shortened until a state with at least two possible
-successors is found (or until `State` is only one token long).
-
-The walk starts at state `[:begin, :begin...]` (the length depends on
-the order of the supplied `model`) and ends once a special token `:end`
-is reached.
-
-See also: [`walk`](@ref).
-"""
-function walk2(model::Model{Any})
-    # First, do the normal append_token operation
-    # Then choose all the states that are similar to the new state
-    # but have more possible following tokens than only one
-    # (or choose the new state itself if it is possibly followed by more than one token
-    # And then, chose a random state from this list
-    newstate = rand ∘ (suf -> states_with_suffix(model, suf)) ∘ append_token
-    return walker(model, begseq(model.order), [], newstate)
-end
-
-"""
     walk2(model::Model{T}[, init_state::State{T}]) where T
 
 Return an array of tokens obtained by a random walk through the Markov chain.
@@ -195,11 +161,22 @@ the current `State` as to lower the requirements and obtain more randomness.
 The `State` gets shortened until a state with at least two possible
 successors is found (or until `State` is only one token long).
 
-The walk starts at state `init_state` and ends once a special
-token `:end` is reached.
+The walk starts at state `init_state` if supplied, and at state
+`[:begin, :begin...]` (the length depends on the order of the supplied `model`)
+otherwise. The walk ends once a special token `:end` is reached.
 
 See also: [`walk`](@ref).
 """
+function walk2(model::Model{Any})
+    # First, do the normal append_token operation
+    # Then choose all the states that are similar to the new state
+    # but have more possible following tokens than only one
+    # (or choose the new state itself if it is possibly followed by more than one token)
+    # And then, chose a random state from this list
+    newstate = rand ∘ (suf -> states_with_suffix(model, suf)) ∘ append_token
+    return walker(model, begseq(model.order), [], newstate)
+end
+
 function walk2(model::Model{T}, init_state::State{T}) where T
     # First, do the normal append_token operation
     # Then choose all the states that are similar to the new state
@@ -313,7 +290,7 @@ Return a random key from `dict`. The probabilities of individual keys
 getting chosen are skewed by their respective values.
 """
 function randkey(dict::AbstractDict{Any, Number})
-    # Accumulate is similat to scanl in Haskell
+    # Accumulate is similar to scanl in Haskell
     # It folds the array with the given function and returns
     # a list of all intermediate values
     possibility_weights = accumulate(+, collect(values(dict)))
