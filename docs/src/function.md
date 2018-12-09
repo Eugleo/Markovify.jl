@@ -13,18 +13,7 @@ P\left[X_{i} = x \vert X_1=x_1, X_2=x_2, \ldots, X_{i-1} = x_{i-1}\right] = P\le
 
 Jinými slovy, stav v okamžiku ``i`` závisí pouze na stavu v předchozím okamžiku.
 
-Tato takzvaná *markovovská vlastnost* dala Markovově *řetězci* jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého.
-
-!!! tip "Příklad"
-    Mějme pravděpodobnostní systém, který popisuje vývoj počasí pomocí dvou stavů: *zataženo* (E) a *jasno* (A). Řekněme, že se snažíme zjistit, s jakou pravděpodobností bude zítra zataženo, neboli hledáme ``P\left[ X_{i+1}=\text{E} \right]``.
-
-    Pokud bychom se snažili namodelovat tento systém bez jakékoli znalosti dnešního počasí, museli bychom si o druhu zítřejšího počasí prostě hodit mincí: nemáme totiž jiný způsob, jak lépe odhadnout, jak zítra bude.
-
-    Pokud ale využijeme znalost toho, jak je dnes, můžeme k namodelování stavu počasí použít Markovův řetězec. Zjistíme si, že pokud je jeden den zataženo, je šance 70%, že další den už bude jasno. Je-li naopak daný den jasno, s pravděpodobností 60% bude následující den také jasno (bydlíme v Kalifornii). Takový Markovův řetezec by se dal grafem znázornit takto (zdroj: Wikipedie):
-
-    ![Znázornění Markovova řetězce grafem](assets/images/markov-weather.png)
-
-Pro úplnost dodáváme, že Markovův řetězec se dá kromě grafu popsat také *maticí pravděpodobností přechodu* ``P``, kde ``p_{ij}`` označuje pravděpodobnost přechodu ze stavu ``i`` do stavu ``j``.
+Tato takzvaná *markovovská vlastnost* dala Markovově *řetězci* jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého. Pro úplnost dodáváme, že Markovův řetězec se dá kromě grafu popsat také *maticí pravděpodobností přechodu* ``P``, kde ``p_{ij}`` označuje pravděpodobnost přechodu ze stavu ``i`` do stavu ``j``.
 
 Pojem Markovův řetězec se dá dále rozšířit o takzvaný *řád*. Stav v okamžiku ``i`` v Markovově řetězci o řádu ``r`` závisí na všech stavech ``X_{i-1}, X_{i-2}, \ldots, X_{i-r}``.
 
