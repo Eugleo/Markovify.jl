@@ -49,6 +49,11 @@ Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocn�
 
 - Počet symbolů `:begin` na začátku pole je roven řádu celého řetězce. To je nutné proto, abychom nemuseli ukládat počáteční stavy do speciální proměnné. Klíče i hodnoty slovníku by totiž měly mít všechny stejný typ.
 
+Původně měla struktura `Model` ještě jedno pole, které bylo speciálně vyhrazené pro počáteční stavy (a `:begin` nebylo používáno). Nastal by pak ale drobný problém, kdyby uživatel chtěl využít externí balíček pro ukládání do souboru JSON, protože `Model` by byl reprezentován dvěma slovníky a bylo by nutné toto při ukládání ošeřit. Uchýlil jsem se proto v pozdějších verzích k tomuto jednoslovníkovému řešení; uživateli teď stačí uložit do souboru pouze slovník `nodes`.
+
+Používal jsem původně místo symbolu `:begin` přímo string `"~~BEGIN~~"`. Pokud by však užival z nějakého důvodu toto slovo měl ve vstupním textu, byl by klidně i prostředek věty omylem pokládán za její začáteční stav. Proto nakonec používám datový typ `Symbol`, který je podobný symbolům v LISP.
+
+
 ## Procházení modelového grafu
 
 Z modelu získáme jeho slovník všech stavů, `nodes`. Začneme ve stavu `[:begin :begin ... :begin]` a poté postupujeme po krocích dále ("krok" viz níže). Jakmile narazíme na token `:end`, vrátíme vybudované pole tokenů.
