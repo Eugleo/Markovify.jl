@@ -43,7 +43,7 @@ struct Model{T}
 end
 
 """
-    function combine(chain, others)
+    combine(chain, others)
 
 Return a Model which is a combination of all of the models provided. All of the
 arguments should have the same `order`. The nodes of all the Models are merged
@@ -54,6 +54,17 @@ function combine(chain, others...) where T
     return Model(chain.order, nodes)
 end
 
+"""
+    makefromdict(nodes)
+
+Return a model constructed from the given nodes. Can be used to reconstruct
+a model object from its nodes, e.g. if the nodes were saved in a JSON file.
+"""
+function makefromdict(nodes)
+    if isempty(nodes) return nothing end
+    # Pick some state and get its length; that's the order of the model
+    order = length(nodes[first(keys(nodes))])
+    return Model(order, nodes)
 
 """
     begseq(n)
