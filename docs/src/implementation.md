@@ -1,7 +1,7 @@
 # Popis implementace
 
 !!! note "Poznámka"
-    Tento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Naopak obecnému principu se věnuje oddíl [Popis funkce](@ref).
+    Tento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Naopak obecnému principu se věnuje oddíl [Popis principu funkce](@ref).
 
 ## Generování textu
 
@@ -11,24 +11,24 @@
 
 ## Rozložení textu na tokeny.
 
-Text je před zpracováním nutno rozdělit na menší celky. Naše konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například tedy: `PoleVět{PoleSlov{Slova/Tokeny}}`. K tomu slouží modul Tokenizer (dokumentace v oddílu [Public Documentation](@ref)), který nabízí několik jednoduchých "kombinátorů", které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů.
+Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například tedy: `PoleVět{PoleSlov{Slova/Tokeny}}`. K tomu slouží modul Tokenizer (dokumentace v oddílu [Public Documentation](@ref pub_tokenizer)), který nabízí několik jednoduchých "kombinátorů", které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů.
 
 ## Trénování modelu na základě tokenů.
 
-Reprezentovat model grafem je zbytečně složité; hlavně implementačně. Je proto nutné převést tuto ústřední datovou strukturu na jinou, se kterou se v kódu lépe pracuje.
+Reprezentovat model grafem je zbytečně složité; hlavně implementačně, protože se jedná o rekurzivní datovou strukturu. Je proto vhodné převést tuto ústřední datovou strukturu na jinou, se kterou se v kódu lépe pracuje.
 
 ### Datové struktury
 
-Můžeme pro zjednodušení využít toho, že dva po sobě jdoucí stavy se liší pouze o jeden token. Celý graf pak jde převést na slovník párující vždy nějaký stav se všemi tokeny, které se po něm vyskytují.
+Pro zjednodušení je možné využít toho, že dva po sobě jdoucí stavy se liší pouze o jeden token. Celý graf pak jde převést na slovník párující vždy nějaký stav se všemi tokeny, které se po něm vyskytují.
 
-Pokud zadefinujeme pomocné datové struktury `State` a `TokenOccurences`
+Pokud zadefinuji pomocné datové struktury `State` a `TokenOccurences`
 
 ```julia
 State{T} = Vector{Token{T}}
 TokenOccurences{T} = Dict{Token{T}, Int}
 ```
 
-můžeme náš graf/Markovův řetězec/model implementovat následovně
+mohu graf/Markovův řetězec/model implementovat následovně
 
 ```julia
 struct Model{T}
@@ -41,22 +41,22 @@ end
 
 Vstupní tokeny je nutno zanalyzovat a vytvořit z nich `Model`. K tomu slouží funkce [`build`](@ref). Každý model má pevně určený řád (order), který je nutné funkci [`build`](@ref) předat jako argument.
 
-Funkce poté prochází jednotlivá pole tokenů po ``k``-ticích, z nichž každá tvoří jeden stav. Tento stav bude klíčem ve slovníku `nodes`. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).
+Funkce poté prochází jednotlivá pole tokenů, vždy zkoumá``k``-tici tokenů v jednom poli — ta tvoří stav. Tento stav bude klíčem ve slovníku `nodes` — všechny klíče tohoto slovníku tvoří kompletní stavový prostor Markovova řetězce. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník `TokenOccurences` párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).
 
-Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocné, konkrétně symboly `:begin` a `:end`, které vyznačují začátek a konec "věty" (tedy jednoho z dílčích polí). Každé pole tedy bude vypdat takto: `[:begin :begin ... :begin token token ... token :end]`.
+Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocné, konkrétně symboly `:begin` a `:end`, které vyznačují začátek a konec "věty" (tedy jednoho z dílčích polí). Každé pole tedy bude vypadat takto: `[:begin :begin ... :begin token token ... token :end]`.
 
 - Účel symbolu `:end` je jednoduchý: ukončuje náhodné procházení modelu ve funkci [`walk`](@ref).
 
-- Počet symbolů `:begin` na začátku pole je roven řádu celého řetězce. To je nutné proto, abychom nemuseli ukládat počáteční stavy do speciální proměnné. Klíče i hodnoty slovníku by totiž měly mít všechny stejný typ.
+- Počet symbolů `:begin` na začátku pole je roven řádu celého řetězce. To je nutné proto, abych nemusel ukládat počáteční stavy do speciální proměnné. Klíče i hodnoty slovníku by totiž měly mít všechny stejný typ.
 
 Původně měla struktura `Model` ještě jedno pole, které bylo speciálně vyhrazené pro počáteční stavy (a `:begin` nebylo používáno). Nastal by pak ale drobný problém, kdyby uživatel chtěl využít externí balíček pro ukládání do souboru JSON, protože `Model` by byl reprezentován dvěma slovníky a bylo by nutné toto při ukládání ošeřit. Uchýlil jsem se proto v pozdějších verzích k tomuto jednoslovníkovému řešení; uživateli teď stačí uložit do souboru pouze slovník `nodes` a využít funkci [`makefromdict`](@ref) k opětovné rekonstrukci modelu.
 
-Používal jsem původně místo symbolu `:begin` přímo string `"~~BEGIN~~"`. Pokud by však užival z nějakého důvodu toto slovo měl ve vstupním textu, byl by klidně i prostředek věty omylem pokládán za její začáteční stav. Proto nakonec používám datový typ `Symbol`, který je podobný symbolům v LISP.
+Místo symbolu `:begin` byl využíván v dřívějších verzích přímo string `"~~BEGIN~~"`. Pokud by však uživatel z nějakého důvodu toto slovo měl ve vstupním textu, byl by klidně i prostředek věty omylem pokládán za počáteční stav. Z toho důvodu nakonec používám datový typ `Symbol`, který je podobný symbolům v LISP.
 
 
 ## Procházení modelového grafu
 
-Z modelu získáme jeho slovník všech stavů, `nodes`. Začneme ve stavu `[:begin :begin ... :begin]` a poté postupujeme po krocích dále ("krok" viz níže). Jakmile narazíme na token `:end`, vrátíme vybudované pole tokenů.
+K procházení grafu a generování náhodného textu slouží funkce [`walk`](@ref) a [`walk2`](@ref). Z modelu získjí jeho slovník všech stavů, `nodes`. Generování začne ve stavu `[:begin :begin ... :begin]` a poté postupuje po krocích dále ("krok" viz níže). Jakmile narazí na token `:end`, vrátí vybudované pole tokenů.
 
 Co je krok:
 1. Nacházíme se v nějakém stavu.
