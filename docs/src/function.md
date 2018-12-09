@@ -1,4 +1,4 @@
-# Popis funkce
+# Popis principu funkce
 
 !!! note "Poznámka"
     Tento text pojednává o obecném principu stojícímu za Markovovými řetězci a generováním textu z nich. Naopak implementaci tohoto obecného principu se věnuje oddíl [Popis implementace](@ref).
