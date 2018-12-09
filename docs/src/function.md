@@ -35,9 +35,11 @@ Proces generování textu pomocí Markovova řetězce se skládá ze dvou část
 2. Procházení vytvořeným grafem a postupné tvoření výstupu.
 
 ### Vytvoření grafu
-Text se zpravidla modeluje řetězci o řádu 2, 3, nebo 4; obecně ``k``. Stavový prostor bude tvořen všemi ``k``-ticemi znaků, které se vyskytují ve vstupním textu: to budou vrcholy požadovaného grafu. Vyplatí se také nějak označit začátek a konec textu, třeba jako speciální stavy.
+Daný text je před modelováním nutné rozložit na tokeny: většinou slova, případně někdy jednotlivé znaky.
 
-Hrany (a jejich hodnoty) pak budou udávat, s jakou pravděpodobností se vyskytuje jedna ``k``-tice znaků "za" jinou. Slovo "za" je v uvozovkách, neboť ``k``-tice se překrývají a dvě následné ``k``-tice se tedy liší pouze v jednom znaku.
+Text se poré zpravidla modeluje řetězcem o řádu 2, 3, nebo 4; obecně ``k``. Stavový prostor bude tvořen všemi ``k``-ticemi tokenů, které se vyskytují ve vstupním textu: to budou vrcholy požadovaného grafu. Vyplatí se také nějak označit začátek a konec textu, třeba jako speciální stavy.
+
+Hrany (a jejich hodnoty) pak budou udávat, s jakou pravděpodobností se vyskytuje jedna ``k``-tice tokenů "za" jinou. Slovo "za" je v uvozovkách, neboť ``k``-tice se překrývají a dvě následné ``k``-tice se tedy liší pouze v jednom znaku.
 
 !!! tip "Příklad"
     Mějme vstupní text "ABABD". Markovův řetězec o řádu 2 tohoto textu by se dal grafem znázornit takto:
