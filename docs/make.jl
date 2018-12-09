@@ -8,8 +8,11 @@ makedocs(
     pages = [
         "Domovská stránka" => "index.md",
         "Vysvětlení" => [
-            "Popis funkce" => "function.md",
-            "Popis implementace" => "implementation.md"
+            "Princip" => "function.md",
+            "Implementace" => "implementation.md"
+        ],
+        "Příklady" => [
+            "Lorem ipsum" => "lipsum.md"
         ],
         "Knihovna" => [
             "Veřejné symboly (EN)" => "public.md",
