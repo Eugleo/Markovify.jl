@@ -1,6 +1,65 @@
 # Popis implementace
 
 !!! note "Poznámka"
-    Tento text pojednává o obecném principu za Markovovými řetězci. Naopak implementaci tohoto obecného principu se věnuje oddíl [Popis implementace](@ref).
+    Tento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Naopak obecnému principu se věnuje oddíl [Popis funkce](@ref).
 
-## Markovovy řetězce
+## Generování textu
+
+1. Rozložení textu na tokeny.
+2. Trénování modelu na základě tokenů.
+3. Procházení modelového grafu.
+
+## Rozložení textu na tokeny.
+
+Text je před zpracováním nutno rozdělit na menší celky. Naše konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například tedy: `PoleVět{PoleSlov{Slova/Tokeny}}`. K tomu slouží modul Tokenizer (dokumentace v oddílu [Public Documentation](@ref)), který nabízí několik jednoduchých "kombinátorů", které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů.
+
+## Trénování modelu na základě tokenů.
+
+Reprezentovat model grafem je zbytečně složité; hlavně implementačně. Je proto nutné převést tuto ústřední datovou strukturu na jinou, se kterou se v kódu lépe pracuje.
+
+### Datové struktury
+
+Můžeme pro zjednodušení využít toho, že dva po sobě jdoucí stavy se liší pouze o jeden token. Celý graf pak jde převést na slovník párující vždy nějaký stav se všemi tokeny, které se po něm vyskytují.
+
+Pokud zadefinujeme pomocné datové struktury `State` a `TokenOccurences`
+
+```julia
+State{T} = Vector{Token{T}}
+TokenOccurences{T} = Dict{Token{T}, Int}
+```
+
+můžeme náš graf/Markovův řetězec/model implementovat následovně
+
+```julia
+struct Model{T}
+    order::Int
+    nodes::Dict{State{T}, TokenOccurences{T}}
+end
+```
+
+### Trénování
+
+Vstupní tokeny je nutno zanalyzovat a vytvořit z nich `Model`. K tomu slouží funkce [`build`](@ref). Každý model má pevně určený řád (order), který je nutné funkci [`build`](@ref) předat jako argument.
+
+Funkce poté prochází jednotlivá pole tokenů po ``k``-ticích, z nichž každá tvoří jeden stav. Tento stav bude klíčem ve slovníku `nodes`. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).
+
+Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocné, konkrétně symboly `:begin` a `:end`, které vyznačují začátek a konec "věty" (tedy jednoho z dílčích polí). Každé pole tedy bude vypdat takto: `[:begin :begin ... :begin token token ... token :end]`.
+
+- Účel symbolu `:end` je jednoduchý: ukončuje náhodné procházení modelu ve funkci [`walk`](@ref).
+
+- Počet symbolů `:begin` na začátku pole je roven řádu celého řetězce. To je nutné proto, abychom nemuseli ukládat počáteční stavy do speciální proměnné. Klíče i hodnoty slovníku by totiž měly mít všechny stejný typ.
+
+## Procházení modelového grafu
+
+Z modelu získáme jeho slovník všech stavů, `nodes`. Začneme ve stavu `[:begin :begin ... :begin]` a poté postupujeme po krocích dále ("krok" viz níže). Jakmile narazíme na token `:end`, vrátíme vybudované pole tokenů.
+
+Co je krok:
+1. Nacházíme se v nějakém stavu.
+2. Koukneme se do slovníku `nodes` na všechny možné tokeny, které následují po současném stavu.
+3. Vybereme jeden z nich. Způsob výběru je náhodný, řídí se ale relativními četnostmi jednotlivých tokenů za daným stavem. Pokud je `nodes[současný_stav]` rovno `Dict(A => 2, B => 1)`, je šance, že zvolený token bude A, dvakrát vyšší, než že to bude B.
+4. Vybraný token zařadíme za současný stav (který je jen polem tokenů) a odstraníme z něj zároveň token, který je na začátku. Toto označíme jako nový stav (má stejnou délku jako ten starý) a jdeme na bod 1.
+
+Jak funguje pseudonáhodný výběr ze slovníku:
+1. Uděláme postupný součet všech četností jednotlivých tokenů. Tj, pro `Dict(A => 2, B => 1, C => 5)` bychom vytvořili pole `[2, 3, 8]`.
+2. Vygenerujeme náhodné číslo v rozmezí od nuly do nejvyššího čísla tohoto pole a pokusíme se ho zařadit do tohoto pole tak, aby pole zůstalo seřazené. Pravděpodobnost výběru daného čísla je tak v poměru k jeho četnosti.
+3. Index, na který bychom číslo umístili, použijeme jako index následujícího tokenu.
