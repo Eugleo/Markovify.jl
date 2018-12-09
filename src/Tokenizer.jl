@@ -25,16 +25,16 @@ function tokenize(inp, func=letters)
 end
 
 """
-    to_lines(text)
+    to_lines(text::AbstractString)
 
 Return an array of lines in `text`.
 """
-function to_lines(text)
+function to_lines(text::AbstractString)
     return split(text, "\n")
 end
 
 """
-    to_sentences(text)
+    to_sentences(text::AbstractString)
 
 Return an array of sentences in `text`. The text is split along dots; the dots
 remain in the strings, only the spaces after the dots are stripped.
@@ -43,7 +43,7 @@ The function tries to be as smart as possible. For example, the string
 `"Channel No. 5 is a perfume."` will be treated as one sentence,
 although it has two dots.
 """
-function to_sentences(text)
+function to_sentences(text::AbstractString)
     # Split on (optional) whitespace if it's preceeded by a dot
     # and if it's followed by a capital letter
     rule = r"((?<=[.])\s*(?=[A-Z]))|((?<=[?!])\s*)"
@@ -51,32 +51,32 @@ function to_sentences(text)
 end
 
 """
-    to_letters(tokens::Vector{String})
+    to_letters(tokens::Vector{<:AbstractString})
 
 Split all of the tokens in `tokens` into individual characters.
 """
-function to_letters(tokens::Vector{String})
+function to_letters(tokens::Vector{<:AbstractString})
     return [split(token, "") for token in tokens]
 end
 
 """
-    to_words(tokens::Vector{String}; keeppunctuation=true)
+    to_words(tokens::Vector{<:AbstractString}; keeppunctuation=true)
 
 Split all of the tokens in `tokens` into individual words by whitespace.
 If `keeppunctuation` is true, all of the special characters are preserved
 (and thus "glued" to the preceding/following word).
 """
-function to_words(tokens::Vector{String}; keeppunctuation=true)
+function to_words(tokens::Vector{<:AbstractString}; keeppunctuation=true)
     rule = if keeppunctuation r"\s+" else r"\W+" end
     return [split(token, rule; keepempty=false) for token in tokens]
 end
 
 """
-    cleanup(suptokens::Vector{Vector{String}}; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
+    cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
 
 Remove all characters that are in `badchars` from all tokens in `suptokens`.
 """
-function cleanup(suptokens::Vector{Vector{String}}; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
+function cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
     cleanup_token(token) = filter(c -> !(c in badchars), token)
 
     return [
