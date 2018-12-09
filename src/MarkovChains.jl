@@ -43,13 +43,13 @@ struct Model{T}
 end
 
 """
-    function combine(chain::Model{T}, others::Model{T}...) where T
+    function combine(chain, others)
 
 Return a Model which is a combination of all of the models provided. All of the
 arguments should have the same `order`. The nodes of all the Models are merged
 using the function `merge`.
 """
-function combine(chain::Model{T}, others::Model{T}...) where T
+function combine(chain, others...) where T
     nodes = merge(chain.nodes for chain in others)
     return Model(chain.order, nodes)
 end
@@ -65,25 +65,25 @@ begseq(n) = fill(:begin, n)
 
 
 """
-    stdweight(state::State{T}, token::Token{T}) where T
+    stdweight(state, token)
 
 A constant `1`. Used as a placeholder function in [`build`](@ref) to represent
 unbiased weight function.
 """
-function stdweight(state::State{T}, token::Token{T}) where T
+function stdweight(state, token) where T
     return 1
 end
 
 """
-    build(suptokens::Vector{<:Vector{<:Token{<:Any}}}; order=2, weight=stdweight)
+    build(suptokens; order=2, weight=stdweight)
 
 Trains a Markov chain on an array of arrays of tokens (suptokens).
 Optionally an `order` of the chain can be supplied, that is
 the number of tokens in one state. A weight function of general
-type `func(s::State{T}, t::Token{T})::Int` can be supplied to be used
+type `func(::State{T}, ::Token{T})::Int` can be supplied to be used
 to bias the weights based on the state or token.
 """
-function build(suptokens::Vector{<:Vector{<:Token{<:T}}}; order=2, weight=stdweight) where T
+function build(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight) where T
     nodes = Dict{State{T}, TokenOccurences{T}}()
     begin_sequence = begseq(order)
     for incomplete_tokens in suptokens
@@ -96,7 +96,7 @@ function build(suptokens::Vector{<:Vector{<:Token{<:T}}}; order=2, weight=stdwei
             state = tokens[i:i+order-1]
             # The token after the current state
             token = tokens[i+order]
-            token_counts = get!(nodes, state, Dict())
+            token_counts = get!(nodes, state, Dict{Token{T}, Int}())
             # Add a new occurence (possible with added weight)
             # of the token after the state
             token_counts[token] = get(token_counts, token, 0) + weight(state, token)
@@ -106,7 +106,7 @@ function build(suptokens::Vector{<:Vector{<:Token{<:T}}}; order=2, weight=stdwei
 end
 
 """
-    walk(model::Model{T}[, init_state::State{T}]) where T
+    walk(model[, init_state])
 
 Return an array of tokens obtained by a random walk through the Markov chain.
 The walk starts at state `init_state` if supplied, and at state
@@ -116,22 +116,22 @@ token `:end` is reached.
 
 See also: [`walk2`](@ref).
 """
-function walk(model::Model{<:Any})
+function walk(model)
     return walker(model, begseq(model.order), [])
 end
 
-function walk(model::Model{T}, init_state::State{T}) where T
+function walk(model, init_state)
     return walker(model, init_state, init_state)
 end
 
 """
-    states_with_suffix(model::Model{T}, init_suffix::Vector{Tokens{T}}) where T
+    states_with_suffix(model, init_suffix)
 
 Return all of the states of `model` that end with `init_suffix`. If
 the number of such states is 1 (or 0), the function shortens the suffix
 (cuts the first token) in order to lower the requirements, and makes another try.
 """
-function states_with_suffix(model::Model{T}, init_suffix::Vector{T}) where T
+function states_with_suffix(model, init_suffix)
     hassuffix(ar, suffix) = ar[end-length(suffix)+1:end] == suffix
 
     # If there is more than one state with given suffix, return the array of them
@@ -152,7 +152,7 @@ function states_with_suffix(model::Model{T}, init_suffix::Vector{T}) where T
 end
 
 """
-    walk2(model::Model{T}[, init_state::State{T}]) where T
+    walk2(model[, init_state])
 
 Return an array of tokens obtained by a random walk through the Markov chain.
 When there is only one state following the current one (i.e. there is 100%
@@ -167,7 +167,7 @@ otherwise. The walk ends once a special token `:end` is reached.
 
 See also: [`walk`](@ref).
 """
-function walk2(model::Model{Any})
+function walk2(model)
     # First, do the normal append_token operation
     # Then choose all the states that are similar to the new state
     # but have more possible following tokens than only one
@@ -177,7 +177,7 @@ function walk2(model::Model{Any})
     return walker(model, begseq(model.order), [], newstate)
 end
 
-function walk2(model::Model{T}, init_state::State{T}) where T
+function walk2(model, init_state)
     # First, do the normal append_token operation
     # Then choose all the states that are similar to the new state
     # but have more possible following tokens than only one
@@ -188,29 +188,29 @@ function walk2(model::Model{T}, init_state::State{T}) where T
 end
 
 """
-    append_token(state::State{T}, token::Token{T}) where T
+    append_token(state, token)
 
 Drop the first element in `state` and append
 the `token` at the end of the `state` array.
 """
-function append_token(state::State{T}, token::Token{T}) where T
+function append_token(state, token)
     return [state[2:end]; [token]]
 end
 
 """
-    walker(model::Model{T}, init_state::State{T}, init_accum, newstate=append_token) where T
+    walker(model, init_state, init_accum, newstate=append_token)
 
 Return an array of tokens obtained by a random walk through the Markov chain.
 The walk starts at state `init_state` and ends once a special token `:end`
 is reached. A function `newstate` of general type
-`func(state::State{T}, token::Token{T})::State{T} where T` can be supplied
+`func(::State{T}, ::Token{T})::State{T} where T` can be supplied
 to be used to generate a new state given the old state and the following token.
 
 This is a general function which is used by all the `walk` functions.
 
 See also: [`walk`](@ref), [`walk2`](@ref).
 """
-function walker(model::Model{T}, init_state::State{T}, init_accum, newstate=append_token) where T
+function walker(model, init_state, init_accum, newstate=append_token)
     function helper(state, accum)
         token = next_token(model, state)
         if token == :end
@@ -223,14 +223,14 @@ function walker(model::Model{T}, init_state::State{T}, init_accum, newstate=appe
 end
 
 """
-    state_with_beginning(model::Model{T}, tokens::Vector{Token{T}}; strict=false) where T
+    state_with_beginning(model, tokens; strict=false)
 
 Attempts to return a random valid state of `model` that begins with `tokens`.
 If `strict` is `false` and the `model` doesn't have any state that begins
 with `tokens`, the function shortens the tokens (cuts the last token)
 to lower the requirements and tries to find some valid state again.
 """
-function state_with_beginning(model::Model{T}, tokens::Vector{Token{T}}; strict=false) where T
+function state_with_beginning(model, tokens; strict=false)
     # The token sequence must be at most as long as the model's state
     if length(tokens) > model.order
         message =
@@ -271,25 +271,25 @@ function state_with_beginning(model::Model{T}, tokens::Vector{Token{T}}; strict=
 end
 
 """
-    next_token(model::Model{T}, state::State{T}) where T
+    next_token(model, state)
 
 Return a token which will come after the current state, at random.
 The probabilities of individual tokens getting choosed
 are skewed by their individual values in the `TokenOccurences` dictionary
 of the current `state`, that is obtained from the `model`.
 """
-function next_token(model::Model{T}, state::State{T}) where T
+function next_token(model, state) where T
     # Choose a random token coming after state
     randkey(model.nodes[state])
 end
 
 """
-    randkey(dict::AbstractDict{Any, Number})
+    randkey(dict)
 
 Return a random key from `dict`. The probabilities of individual keys
 getting chosen are skewed by their respective values.
 """
-function randkey(dict::AbstractDict{Any, Number})
+function randkey(dict)
     # Accumulate is similar to scanl in Haskell
     # It folds the array with the given function and returns
     # a list of all intermediate values
@@ -302,12 +302,12 @@ function randkey(dict::AbstractDict{Any, Number})
 end
 
 """
-    indexof(array::AbstractVector{T}, n::T) where T
+    indexof(array)
 
 Given a sorted `array`, return the index on which `n` would be inserted in
 should the insertion preserve the sorting.
 """
-function indexof(array::AbstractVector{T}, n::T) where T
+function indexof(array, n)
     for i in 1:length(array)
         if array[i] >= n
             return i
