@@ -65,6 +65,7 @@ function makefromdict(nodes)
     # Pick some state and get its length; that's the order of the model
     order = length(nodes[first(keys(nodes))])
     return Model(order, nodes)
+end
 
 """
     begseq(n)
