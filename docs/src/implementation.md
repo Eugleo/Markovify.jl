@@ -3,7 +3,7 @@
 !!! note "Poznámka"
     Tento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Naopak obecnému principu se věnuje oddíl [Popis principu funkce](@ref).
 
-## Generování textu
+Generování textu se dá rozdělit na několik logických podcelků:
 
 1. Rozložení textu na tokeny.
 2. Trénování modelu na základě tokenů.
