@@ -1,6 +1,6 @@
 module MarkovChains
 
-export build, walk, walk2, combine, state_with_beginning
+export build, walk, walk2, combine, makefromdict, state_with_beginning
 
 """
     Token{T} = Union{Symbol, T}
