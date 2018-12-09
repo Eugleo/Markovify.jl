@@ -13,7 +13,7 @@ export tokenize,
     tokenize(inp[, func=letters])
 
 Split the text into SupTokens (list of lists of tokens). An optional function
-of general type `func(inp:T1)::Vector{Vector{T2}}` can be provided to be used
+of general type `func(::Any)::Vector{Vector{Any}}` can be provided to be used
 for the tokenization.
 
 For possible *combinators* which can be composed to obtain `func`, see:
