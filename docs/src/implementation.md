@@ -9,11 +9,11 @@
 2. Trénování modelu na základě tokenů.
 3. Procházení modelového grafu.
 
-## Rozložení textu na tokeny.
+## Rozložení textu na tokeny
 
 Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například tedy: `PoleVět{PoleSlov{Slova/Tokeny}}`. K tomu slouží modul Tokenizer (dokumentace v oddílu [Public Documentation](@ref pub_tokenizer)), který nabízí několik jednoduchých "kombinátorů", které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů.
 
-## Trénování modelu na základě tokenů.
+## Trénování modelu na základě tokenů
 
 Reprezentovat model grafem je zbytečně složité; hlavně implementačně, protože se jedná o rekurzivní datovou strukturu. Je proto vhodné převést tuto ústřední datovou strukturu na jinou, se kterou se v kódu lépe pracuje.
 
