@@ -12,10 +12,10 @@ Hlavním úkolem tohoto balíčku je nabídnout kladnou odpověď na otázku: "M
 Pár správných textových souborů a tento balíček je vše, co vám stačí ke generování jmen, náhodných slov,
 vět, i delších textů, a to v jakémkoli jazyce. Balíček je navrhnut tak, aby se dal použít na co možná nejširší škálu problémů.
 
-## Přesný popis funkce
+## Moduly
 
-Balíček slouží k vytvoření Markovova řetězce daného řádu ze vstupního textu. Pomocí tohoto *modelu* je poté možné generovat náhodný text, který sdílí s původním textem určité vlastnosti (konkrétně popsáno v oddílu [Popis principu funkce](@ref)).
+Balíček exportuje dva moduly, Tokenizer a MarkovChains.
 
-Protože Markovovy řetězce umí tento balíček stavět pouze z textu rozděleného na části, takzvané *tokeny*, poskytuje současně kromě Markovových řetězců i několik základních funkcí, pomocí kterých je možno jakýkoli text na vhodné tokeny rozdělit. Kromě toho je rovnou při rozdělování možno vstupní text zbavit nežádoucích znaků (viz dokumentace modulu `Tokenizer` v oddílu [Public Documentation](@ref pub_tokenizer)). Další funkce na rozdělování textu, stejně jako funkce na čištění vstupu, si může uživatel jednoduše nadefinovat sám a říct funkcím modulu `Tokenizer`, ať pracují s nimi místo s funkcemi výchozími. Poskytované funkce by nicméně měly stačit na většinu běžných vstupů.
+Modul [Tokenizer](@ref pub_tokenizer) slouží k rozdělení jednolitého textu na menší části, takzvané *tokeny*. To je nutné proto, že modul MarkovChains umí pracovat právě pouze s polem polí takovýchto tokenů. V modulu se nechází několikero funkcí, které lze skládat a které nabízejí různé způsoby rozkládání textu.
 
-Jakmile je text rozdělený na tokeny, je možné z něj vytvořit *model*. Model je nepřesnou reprezentací Markovova řetězce přizpůsobeného ke generování náhodného textu (viz oddíl [Popis principu funkce](@ref)). Balíček poskytuje několik funkcí, které umí na základě modelu vygenerovat text, který má podobné charakteristiky jako text původní. Kvalita modelu závisí na jeho řádu, při vyšším řádu je ovšem nutné dodat větší množství trénovacího textu, jinak má generovaný text tendenci ztrácet svůj náhodný charakter.
+Modul [MarkovChains](@ref pub_tokenizer) dovoluje uživateli vytvořit [`Model`](@ref), který reprezentuje Markovův řetězec. Pomocí modelu je pak možné generovat náhodný text, který sdílí s původním textem určité vlastnosti: většinou poměr znaků a délku slov/celků. Princip funkce je konkrétně popsán v oddílu [Popis principu funkce](@ref). Lze nastavit i řád modelu a tak regulovat, jak moc se bude generovaný text podobat tomu původnímu.
