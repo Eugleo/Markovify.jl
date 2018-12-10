@@ -10,18 +10,18 @@ export tokenize,
        lines
 
 """
-    tokenize(inp[, func=letters])
+    tokenize(text[, on=letters])
 
-Split the text into SupTokens (list of lists of tokens). An optional function
-of general type `func(::Any)::Vector{Vector{Any}}` can be provided to be used
+Split `text` into SupTokens (array of arrays of tokens). An optional function
+of general type `func(::Any) -> Vector{Vector{Any}}` can be provided to be used
 for the tokenization.
 
 For possible *combinators* which can be composed to obtain `func`, see:
 [`to_lines`](@ref), [`to_sentences`](@ref), [`to_letters`](@ref), [`to_words`](@ref),
 [`cleanup`](@ref).
 """
-function tokenize(inp, func=letters)
-    return func(inp)
+function tokenize(text; on=letters)
+    return on(text)
 end
 
 """

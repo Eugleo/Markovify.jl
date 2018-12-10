@@ -12,13 +12,13 @@ Tests for the module Tokenizer
 
 text = "ABC.DAB.\n ACDA"
 
-@test tokenize(text, letters) == [
+@test tokenize(text; on=letters) == [
     ["A", "B", "C", "."],
     ["D", "A", "B", "."],
     ["A", "C", "D", "A"],
 ]
 
-@test tokenize(text, lines) == [
+@test tokenize(text; on=lines) == [
     ["A", "B", "C", ".", "D", "A", "B", "."],
     [" ", "A", "C", "D", "A"]
 ]
@@ -29,7 +29,7 @@ Tests for the module MarkovChains
 
 =#
 
-tokens = tokenize(text, letters)
+tokens = tokenize(text; on=letters)
 model = build(tokens; order=1)
 
 @test model.nodes ==
