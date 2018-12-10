@@ -58,5 +58,5 @@ model2 = Model(tokens; order=2)
     ["B", "C"]
 ]
 
-@test MarkovChains.indexof(collect(-1:12), 10) == 12
+@test MarkovChains.indexin(collect(-1:12), 10) == 12
 end

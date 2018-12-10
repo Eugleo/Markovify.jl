@@ -308,17 +308,17 @@ function randkey(dict)
     # Generate a random index in range 1:length(keys(dict))
     # by generating a random number and then placing it into
     # a sorted array of accomulated occurence sums
-    index = indexof(possibility_weights, rand() * possibility_weights[end])
+    index = indexin(possibility_weights, rand() * possibility_weights[end])
     return collect(keys(dict))[index]
 end
 
 """
-    indexof(array)
+    indexin(array)
 
 Given a sorted `array`, return the index on which `n` would be inserted in
 should the insertion preserve the sorting.
 """
-function indexof(array, n)
+function indexin(array, n)
     for i in 1:length(array)
         if array[i] >= n
             return i
