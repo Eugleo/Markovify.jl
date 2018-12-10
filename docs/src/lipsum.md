@@ -41,7 +41,7 @@ nothing #hide
 
 Modelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce [`combine`](@ref).
 
-Protože funkce [`build`](@ref) očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí [`tokenize`](@ref) a [`words`](@ref). Tím dokončíme krok 1.
+Protože funkce [`Model`](@ref) očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí [`tokenize`](@ref) a [`words`](@ref). Tím dokončíme krok 1.
 
 ```@example 1
 function loadfiles(filenames)
@@ -49,8 +49,8 @@ function loadfiles(filenames)
     return (
         open(filename) do f
             # Tokenize on words
-            tokens = tokenize(read(f, String), words)
-            return build(tokens; order=1)
+            tokens = tokenize(read(f, String); on=words)
+            return Model(tokens; order=1)
         end
         for filename in filenames
     )

@@ -1,6 +1,6 @@
 module MarkovChains
 
-export build, walk, walk2, combine, makefromdict, state_with_beginning
+export Model, walk, walk2, combine, makefromdict, state_with_beginning
 
 """
     Token{T} = Union{Symbol, T}
@@ -78,7 +78,7 @@ begseq(n) = fill(:begin, n)
 """
     stdweight(state, token)
 
-A constant `1`. Used as a placeholder function in [`build`](@ref) to represent
+A constant `1`. Used as a placeholder function in [`Model`](@ref) to represent
 unbiased weight function.
 """
 function stdweight(state, token) where T
@@ -86,15 +86,15 @@ function stdweight(state, token) where T
 end
 
 """
-    build(suptokens; order=2, weight=stdweight)
+    Model(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight)
 
-Trains a Markov chain on an array of arrays of [`tokens`](@ref Token) (`suptokens`).
-Optionally an `order` of the chain can be supplied, that is
+Returns a [`Model`](@ref) trained on an array of arrays of [`tokens`](@ref Token) (`suptokens`).
+Optionally an `order` of the chain can be supplied; that is
 the number of tokens in one state. A weight function of general
-type `func(::State{T}, ::Token{T})::Int` can be supplied to be used
-to bias the weights based on the state or token.
+type `func(::State{T}, ::Token{T}) -> Int` can be supplied to be used
+to bias the weights based on the state or token value.
 """
-function build(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight) where T
+function Model(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight) where T
     nodes = Dict{State{T}, TokenOccurences{T}}()
     begin_sequence = begseq(order)
     for incomplete_tokens in suptokens

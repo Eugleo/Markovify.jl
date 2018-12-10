@@ -30,7 +30,7 @@ Tests for the module MarkovChains
 =#
 
 tokens = tokenize(text; on=letters)
-model = build(tokens; order=1)
+model = Model(tokens; order=1)
 
 @test model.nodes ==
     Dict(
@@ -46,7 +46,7 @@ model = build(tokens; order=1)
 
 @test_throws KeyError walk(model, ["E"])
 
-model2 = build(tokens; order=2)
+model2 = Model(tokens; order=2)
 
 @test MarkovChains.states_with_suffix(model2, ["."]) == [
     ["B", "."],

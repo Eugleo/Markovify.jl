@@ -39,7 +39,7 @@ end
 
 ### Trénování
 
-Vstupní tokeny je nutno zanalyzovat a vytvořit z nich `Model`. K tomu slouží funkce [`build`](@ref). Každý model má pevně určený řád (order), který je nutné funkci [`build`](@ref) předat jako argument.
+Vstupní tokeny je nutno zanalyzovat a vytvořit z nich `Model`. K tomu slouží konstruktor [`Model`](@ref). Každý model má pevně určený řád (order), který je nutné této funkci předat jako argument.
 
 Funkce poté prochází jednotlivá pole tokenů, vždy zkoumá``k``-tici tokenů v jednom poli — ta tvoří stav. Tento stav bude klíčem ve slovníku `nodes` — všechny klíče tohoto slovníku tvoří kompletní stavový prostor Markovova řetězce. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník `TokenOccurences` párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).
 
