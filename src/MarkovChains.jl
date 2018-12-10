@@ -56,7 +56,7 @@ end
 """
     Model(nodes)
 
-Return a model constructed from the given nodes. Can be used to reconstruct
+Return a model constructed from `nodes`. Can be used to reconstruct
 a model object from its nodes, e.g. if the nodes were saved in a JSON file.
 """
 function Model(nodes)
@@ -88,7 +88,7 @@ end
 """
     Model(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight)
 
-Returns a [`Model`](@ref) trained on an array of arrays of [`tokens`](@ref Token) (`suptokens`).
+Return a [`Model`](@ref) trained on an array of arrays of [`tokens`](@ref Token) (`suptokens`).
 Optionally an `order` of the chain can be supplied; that is
 the number of tokens in one state. A weight function of general
 type `func(::State{T}, ::Token{T}) -> Int` can be supplied to be used
