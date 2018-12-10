@@ -1,7 +1,7 @@
 # Markov Chains
 
 ![](https://img.shields.io/github/license/mashape/apistatus.svg)
-[![](https://img.shields.io/badge/docs-stable-brightgreen.svg)][https://eugleo.github.io/MarkovChains.jl/]
+[![](https://img.shields.io/badge/docs-stable-brightgreen.svg)](https://eugleo.github.io/MarkovChains.jl/)
 
 Train a simple model on inout text and generate new text from it.
 
