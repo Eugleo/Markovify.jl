@@ -36,11 +36,11 @@ end</code></pre></div><p>Když už máme model, chtěli bychom pomocí něj vyge
     # Print each sentence on its own line
     println(join(sentences, &quot;\n&quot;))
 end</code></pre></div><p>Nyní už stačí jen vytvořit a natrénovat model a začít generovat! To je 3. a poslední krok.</p><div><pre><code class="language-julia">MODEL_DE = combine(loadfiles(filenames_de)...)
-gensentences(MODEL_DE, 4)</code></pre><pre><code class="language-none">Gott Auch die Welt vergess’ ich’s doch!
-Aber was soll das Stroh das für Unsinn vor?
-Mephistopheles. Mein Leipzig lob’ ich nicht!
-Die ird’sche Brust uns besinnen, Die Botschaft hör’ euch darnach entstehn.</code></pre></div><p>A podobně také ve francouzštině:</p><div><pre><code class="language-julia">MODEL_FR = combine(loadfiles(filenames_fr)...)
-gensentences(MODEL_FR, 4)</code></pre><pre><code class="language-none">Mais je déclarai lenfant sans aucun ne vécut pas un remplaçant.
-Mantoux servit à la mort de mourir sitôt, sans peine inutile pour la phthisie.
-Lexpérience ne veut sans vous en parlerait?
-Mais il ne désobéit pas à dire.</code></pre></div><hr/><div class="footnote" id="footnote-1"><a href="#footnote-1"><strong>[1]</strong></a><p>Všechny texty použité v této demonstraci pocházejí z <a href="https://www.gutenberg.org">projektu Gutenberg</a>.</p></div><footer><hr/><a class="previous" href="../implementation/"><span class="direction">Previous</span><span class="title">Implementace</span></a><a class="next" href="../public/"><span class="direction">Next</span><span class="title">Veřejné symboly (EN)</span></a></footer></article></body></html>
+gensentences(MODEL_DE, 4)</code></pre><pre><code class="language-none">Am ersten sang, Zerstoben ist alles zu streuen!
+Fluch sey für sie an Brust an der Nachwelt reden und Mückennas’ Ihr anzutragen?
+Altmayer. Es ist oder weh dir!
+Am meisten lieb’ ich euch auch den tröstlichen Gesang?</code></pre></div><p>A podobně také ve francouzštině:</p><div><pre><code class="language-julia">MODEL_FR = combine(loadfiles(filenames_fr)...)
+gensentences(MODEL_FR, 4)</code></pre><pre><code class="language-none">Cétait un bâtiment anglais, on na pas inutile.
+sécria comme ébloui des linges pour ceux qui font leurs nids.
+jaurais douze cents francs par derrière?
+Un autre et des agents de beaux yeux, et la pluie battante.</code></pre></div><hr/><div class="footnote" id="footnote-1"><a href="#footnote-1"><strong>[1]</strong></a><p>Všechny texty použité v této demonstraci pocházejí z <a href="https://www.gutenberg.org">projektu Gutenberg</a>.</p></div><footer><hr/><a class="previous" href="../implementation/"><span class="direction">Previous</span><span class="title">Implementace</span></a><a class="next" href="../public/"><span class="direction">Next</span><span class="title">Veřejné symboly (EN)</span></a></footer></article></body></html>

@@ -25,11 +25,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#Přesný-popis-funkce-1",
+    "location": "#Moduly-1",
     "page": "Domovská stránka",
-    "title": "Přesný popis funkce",
+    "title": "Moduly",
     "category": "section",
-    "text": "Balíček slouží k vytvoření Markovova řetězce daného řádu ze vstupního textu. Pomocí tohoto modelu je poté možné generovat náhodný text, který sdílí s původním textem určité vlastnosti (konkrétně popsáno v oddílu Popis principu funkce).Protože Markovovy řetězce umí tento balíček stavět pouze z textu rozděleného na části, takzvané tokeny, poskytuje současně kromě Markovových řetězců i několik základních funkcí, pomocí kterých je možno jakýkoli text na vhodné tokeny rozdělit. Kromě toho je rovnou při rozdělování možno vstupní text zbavit nežádoucích znaků (viz dokumentace modulu Tokenizer v oddílu Public Documentation). Další funkce na rozdělování textu, stejně jako funkce na čištění vstupu, si může uživatel jednoduše nadefinovat sám a říct funkcím modulu Tokenizer, ať pracují s nimi místo s funkcemi výchozími. Poskytované funkce by nicméně měly stačit na většinu běžných vstupů.Jakmile je text rozdělený na tokeny, je možné z něj vytvořit model. Model je nepřesnou reprezentací Markovova řetězce přizpůsobeného ke generování náhodného textu (viz oddíl Popis principu funkce). Balíček poskytuje několik funkcí, které umí na základě modelu vygenerovat text, který má podobné charakteristiky jako text původní. Kvalita modelu závisí na jeho řádu, při vyšším řádu je ovšem nutné dodat větší množství trénovacího textu, jinak má generovaný text tendenci ztrácet svůj náhodný charakter."
+    "text": "Balíček exportuje dva moduly, Tokenizer a MarkovChains.Modul Tokenizer slouží k rozdělení jednolitého textu na menší části, takzvané tokeny. To je nutné proto, že modul MarkovChains umí pracovat právě pouze s polem polí takovýchto tokenů. V modulu se nechází několikero funkcí, které lze skládat a které nabízejí různé způsoby rozkládání textu.Modul MarkovChains dovoluje uživateli vytvořit Model, který reprezentuje Markovův řetězec. Pomocí modelu je pak možné generovat náhodný text, který sdílí s původním textem určité vlastnosti: většinou poměr znaků a délku slov/celků. Princip funkce je konkrétně popsán v oddílu Popis principu funkce. Lze nastavit i řád modelu a tak regulovat, jak moc se bude generovaný text podobat tomu původnímu."
 },
 
 {
@@ -45,7 +45,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Princip",
     "title": "Popis principu funkce",
     "category": "section",
-    "text": "note: Poznámka\nTento text pojednává o obecném principu stojícímu za Markovovými řetězci a generováním textu z nich. Naopak implementaci tohoto obecného principu se věnuje oddíl Popis implementace."
+    "text": "note: Poznámka\nTento text pojednává o obecném principu stojícímu za Markovovými řetězci a generováním textu z nich. Implementaci tohoto obecného principu se věnuje oddíl Popis implementace."
 },
 
 {
@@ -53,7 +53,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Princip",
     "title": "Markovův řetězec",
     "category": "section",
-    "text": "Stacionární Markovův řetězec (dále Markovův řetězec) je uspořádaná posloupnost n náhodných proměnných X_1 X_2 ldots X_n.[1] Ty mohou nabývat jedné z konečné množiny hodnot; hodnotu náhodné proměnné X_i budeme značit x_i a nazveme ji stav v okamžiku i. Množinu všech možných stavů označíme jako stavový prostor. Pro všechny X_i (i1) platí, že:PleftX_i = x vert X_1=x_1 X_2=x_2 ldots X_i-1 = x_i-1right = PleftX_i = x vert X_i-1 = x_i-1rightJinými slovy, stav v okamžiku i závisí pouze na stavu v předchozím okamžiku.Tato takzvaná markovovská vlastnost dala Markovově řetězci jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého. Pro úplnost dodáváme, že Markovův řetězec se dá kromě grafu popsat také maticí pravděpodobností přechodu P, kde p_ij označuje pravděpodobnost přechodu ze stavu i do stavu j.Pojem Markovův řetězec se dá dále rozšířit o takzvaný řád. Stav v okamžiku i v Markovově řetězci o řádu r závisí na všech stavech X_i-1 X_i-2 ldots X_i-r."
+    "text": "Stacionární Markovův řetězec (dále Markovův řetězec) je uspořádaná posloupnost n náhodných proměnných X_1 X_2 ldots X_n.[1] Ty mohou nabývat jedné z konečné množiny hodnot; hodnotu náhodné proměnné X_i budeme značit x_i a nazveme ji stav v okamžiku i. Množinu všech možných stavů označíme jako stavový prostor. Pro všechny X_i (i1) platí, že:PleftX_i = x vert X_1=x_1 X_2=x_2 ldots X_i-1 = x_i-1right = PleftX_i = x vert X_i-1 = x_i-1rightJinými slovy, stav v okamžiku i závisí pouze na stavu v předchozím okamžiku.Tato takzvaná markovovská vlastnost dala Markovově řetězci jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého. Pro úplnost je dobré dodat, že Markovův řetězec se dá kromě grafu popsat také maticí pravděpodobností přechodu P, kde p_ij označuje pravděpodobnost přechodu ze stavu i do stavu j.Pojem Markovův řetězec se dá dále rozšířit o takzvaný řád. Stav v okamžiku i v Markovově řetězci o řádu r závisí na všech stavech X_i-1 X_i-2 ldots X_i-r."
 },
 
 {
@@ -61,7 +61,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Princip",
     "title": "Generování textu",
     "category": "section",
-    "text": "Proces generování textu pomocí Markovova řetězce se skládá ze dvou částí:Vytvoření samotného řetězce na základě vstupního textu.\nProcházení vytvořeným grafem a postupné tvoření výstupu."
+    "text": "Proces generování textu pomocí Markovova řetězce se skládá ze dvou částí:Vytvoření řetězce na základě vstupního textu.\nProcházení vytvořeným grafem a postupné tvoření výstupu."
 },
 
 {
@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Implementace",
     "title": "Popis implementace",
     "category": "section",
-    "text": "note: Poznámka\nTento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Naopak obecnému principu se věnuje oddíl Popis principu funkce.Generování textu se dá rozdělit na několik logických podcelků:Rozložení textu na tokeny.\nTrénování modelu na základě tokenů.\nProcházení modelového grafu."
+    "text": "note: Poznámka\nTento text pojednává o konkrétní implementaci Markovova řetězce v tomto balíčku. Obecnému principu se věnuje oddíl Popis principu funkce.Generování textu se dá rozdělit na několik logických podcelků:Rozložení textu na tokeny.\nTrénování modelu na základě tokenů.\nProcházení modelového grafu."
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Implementace",
     "title": "Rozložení textu na tokeny",
     "category": "section",
-    "text": "Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například tedy: PoleVět{PoleSlov{Slova/Tokeny}}. K tomu slouží modul Tokenizer (dokumentace v oddílu Public Documentation), který nabízí několik jednoduchých \"kombinátorů\", které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů."
+    "text": "Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například: PoleVět{PoleSlov{Slova}}. K tomu slouží modul Tokenizer), který nabízí několik jednoduchých kombinátorů, které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů."
 },
 
 {
@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Implementace",
     "title": "Trénování",
     "category": "section",
-    "text": "Vstupní tokeny je nutno zanalyzovat a vytvořit z nich Model. K tomu slouží konstruktor Model. Každý model má pevně určený řád (order), který je nutné této funkci předat jako argument.Funkce poté prochází jednotlivá pole tokenů, vždy zkoumák-tici tokenů v jednom poli — ta tvoří stav. Tento stav bude klíčem ve slovníku nodes — všechny klíče tohoto slovníku tvoří kompletní stavový prostor Markovova řetězce. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník TokenOccurences párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocné, konkrétně symboly :begin a :end, které vyznačují začátek a konec \"věty\" (tedy jednoho z dílčích polí). Každé pole tedy bude vypadat takto: [:begin :begin ... :begin token token ... token :end].Účel symbolu :end je jednoduchý: ukončuje náhodné procházení modelu ve funkci walk.\nPočet symbolů :begin na začátku pole je roven řádu celého řetězce. To je nutné proto, abych nemusel ukládat počáteční stavy do speciální proměnné. Klíče i hodnoty slovníku by totiž měly mít všechny stejný typ.Původně měla struktura Model ještě jedno pole, které bylo speciálně vyhrazené pro počáteční stavy (a :begin nebylo používáno). Nastal by pak ale drobný problém, kdyby uživatel chtěl využít externí balíček pro ukládání do souboru JSON, protože Model by byl reprezentován dvěma slovníky a bylo by nutné toto při ukládání ošeřit. Uchýlil jsem se proto v pozdějších verzích k tomuto jednoslovníkovému řešení; uživateli teď stačí uložit do souboru pouze slovník nodes a využít funkci Model k opětovné rekonstrukci modelu.Místo symbolu :begin byl využíván v dřívějších verzích přímo string \"~~BEGIN~~\". Pokud by však uživatel z nějakého důvodu toto slovo měl ve vstupním textu, byl by klidně i prostředek věty omylem pokládán za počáteční stav. Z toho důvodu nakonec používám datový typ Symbol, který je podobný symbolům v LISP."
+    "text": "Ze vstupních tokenů chceme vytvořit Model; k tomu slouží konstruktor Model. Každý model má pevně určený řád (order), který je nutné této funkci předat jako argument.Konstruktor poté prochází jednotlivá pole tokenů, vždy zkoumá k-tici tokenů v jednom poli — ta tvoří stav. Tento stav bude klíčem ve slovníku nodes — všechny klíče tohoto slovníku tvoří kompletní stavový prostor Markovova řetězce. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník TokenOccurences párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocné, konkrétně symboly :begin a :end, které vyznačují začátek a konec \"věty\" (tedy jednoho z dílčích polí). Každé pole tokenů bude po úpravě vypadat takto: [:begin :begin ... :begin token token ... token :end].Počet symbolů :begin na začátku pole je roven řádu celého řetězce. To je nutné proto, abych nemusel ukládat počáteční stavy do speciální proměnné.\nÚčel symbolu :end je jednoduchý: ukončuje náhodné procházení modelu ve funkci walk.Původně měla struktura Model ještě jedno pole, které bylo speciálně vyhrazené pro počáteční stavy (a :begin nebylo používáno). Nastal by pak ale drobný problém, kdyby uživatel chtěl využít externí balíček pro ukládání do souboru JSON, protože Model by byl reprezentován dvěma slovníky a bylo by nutné toto při ukládání ošeřit. Uchýlil jsem se proto v pozdějších verzích k tomuto jednoslovníkovému řešení; uživateli teď stačí uložit do souboru pouze slovník nodes a využít funkci Model k opětovné rekonstrukci modelu.Místo symbolu :begin byl využíván v dřívějších verzích přímo string \"~~BEGIN~~\". Pokud by však uživatel z nějakého důvodu toto slovo měl ve vstupním textu, byl by klidně i prostředek věty omylem pokládán za počáteční stav. Z toho důvodu nakonec používám datový typ Symbol, který je podobný symbolům v LISP.Současný stav je vlastně pole tokenů. Je tedy teoreticky možné, že by se u jednoho modelu mohly objevit různě dlouhé stavy (například pole s jedním a dvěma prvky), což je samozřejmě chyba, protože každý model má fixní řád. Bylo by tedy lepší, aby byl stav reprezentovaný tuplem, který má už ve svém typu pevně stanovenou délku. V Julii je toto ovšem netriviální na implementaci (bylo by nutné změnit velkou část funkčního kódu) a tak jsem zatím tento krok nepodnikl."
 },
 
 {
@@ -133,7 +133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Implementace",
     "title": "Procházení modelového grafu",
     "category": "section",
-    "text": "K procházení grafu a generování náhodného textu slouží funkce walk a walk2. Z modelu získjí jeho slovník všech stavů, nodes. Generování začne ve stavu [:begin :begin ... :begin] a poté postupuje po krocích dále (\"krok\" viz níže). Jakmile narazí na token :end, vrátí vybudované pole tokenů.Co je krok:Nacházíme se v nějakém stavu.\nKoukneme se do slovníku nodes na všechny možné tokeny, které následují po současném stavu.\nVybereme jeden z nich. Způsob výběru je náhodný, řídí se ale relativními četnostmi jednotlivých tokenů za daným stavem. Pokud je nodes[současný_stav] rovno Dict(A => 2, B => 1), je šance, že zvolený token bude A, dvakrát vyšší, než že to bude B.\nVybraný token zařadíme za současný stav (který je jen polem tokenů) a odstraníme z něj zároveň token, který je na začátku. Toto označíme jako nový stav (má stejnou délku jako ten starý) a jdeme na bod 1.Jak funguje pseudonáhodný výběr ze slovníku:Uděláme postupný součet všech četností jednotlivých tokenů. Tj, pro Dict(A => 2, B => 1, C => 5) bychom vytvořili pole [2, 3, 8].\nVygenerujeme náhodné číslo v rozmezí od nuly do nejvyššího čísla tohoto pole a pokusíme se ho zařadit do tohoto pole tak, aby pole zůstalo seřazené. Pravděpodobnost výběru daného čísla je tak v poměru k jeho četnosti.\nIndex, na který bychom číslo umístili, použijeme jako index následujícího tokenu."
+    "text": "K procházení grafu a generování náhodného textu slouží funkce walk a walk2. Z modelu získají jeho slovník všech stavů, nodes. Generování začne ve stavu [:begin :begin ... :begin] a poté postupuje po krocích (co je krok viz níže). Jakmile narazí na token :end, vrátí pole vybraných tokenů.Co je krok:Nacházíme se v nějakém stavu.\nKoukneme se do slovníku nodes na všechny možné tokeny, které následují po současném stavu.\nVybereme jeden z nich. Způsob výběru je náhodný, řídí se ale relativními četnostmi jednotlivých tokenů za daným stavem. Pokud je nodes[současný_stav] rovno Dict(A => 2, B => 1), je šance, že zvolený token bude A, dvakrát vyšší, než že to bude B.\nVybraný token zařadíme za současný stav (který je jen polem tokenů) a odstraníme z něj zároveň token, který je na začátku. Toto označíme jako nový stav (má stejnou délku jako ten starý) a jdeme na bod 1.Jak funguje pseudonáhodný výběr ze slovníku, tedy bod 3:Uděláme postupný součet všech četností jednotlivých tokenů. Tj. pro Dict(A => 2, B => 1, C => 5) bychom vytvořili pole [2, 3, 8].\nVygenerujeme náhodné číslo v rozmezí od nuly do nejvyššího čísla tohoto pole a pokusíme se ho zařadit do tohoto pole tak, aby pole zůstalo seřazené.\nIndex, na který bychom číslo umístili, použijeme jako index následujícího tokenu. Pravděpodobnost, že zařadíme toto náhodné číslo na konkrétní index je ovlivněna vzdáleností mezi sousedními čísly, a tedy vlastně relativní četností jednotlivých tokenů."
 },
 
 {
@@ -225,7 +225,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "public/#Module-MarkovChains-1",
+    "location": "public/#pub_markov-1",
     "page": "Veřejné symboly (EN)",
     "title": "Module MarkovChains",
     "category": "section",
