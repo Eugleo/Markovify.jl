@@ -81,7 +81,7 @@ begseq(n) = fill(:begin, n)
 A constant `1`. Used as a placeholder function in [`Model`](@ref) to represent
 unbiased weight function.
 """
-function stdweight(state, token) where T
+function stdweight(state, token)
     return 1
 end
 
