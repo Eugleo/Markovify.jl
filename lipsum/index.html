@@ -12,13 +12,13 @@ filenames_de = [
     &quot;assets/corpora/german/src1.txt&quot;,
     &quot;assets/corpora/german/src2.txt&quot;,
     &quot;assets/corpora/german/src3.txt&quot;
-]</code></pre></div><p>Modelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce <a href="../public/#MarkovChains.combine-Tuple{Any,Vararg{Any,N} where N}"><code>combine</code></a>.</p><p>Protože funkce <a href="../public/#MarkovChains.build-Union{Tuple{Array{#s18,1} where #s18&lt;:Array{T,1}}, Tuple{T}} where T"><code>build</code></a> očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí <a href="../public/#Tokenizer.tokenize"><code>tokenize</code></a> a <a href="../public/#Tokenizer.words"><code>words</code></a>. Tím dokončíme krok 1.</p><div><pre><code class="language-julia">function loadfiles(filenames)
+]</code></pre></div><p>Modelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce <a href="../public/#MarkovChains.combine-Tuple{Any,Vararg{Any,N} where N}"><code>combine</code></a>.</p><p>Protože funkce <a href="../public/#MarkovChains.Model"><code>Model</code></a> očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí <a href="../public/#Tokenizer.tokenize-Tuple{Any}"><code>tokenize</code></a> a <a href="../public/#Tokenizer.words"><code>words</code></a>. Tím dokončíme krok 1.</p><div><pre><code class="language-julia">function loadfiles(filenames)
     # Return an iterator
     return (
         open(filename) do f
             # Tokenize on words
-            tokens = tokenize(read(f, String), words)
-            return build(tokens; order=1)
+            tokens = tokenize(read(f, String); on=words)
+            return Model(tokens; order=1)
         end
         for filename in filenames
     )
@@ -36,11 +36,11 @@ end</code></pre></div><p>Když už máme model, chtěli bychom pomocí něj vyge
     # Print each sentence on its own line
     println(join(sentences, &quot;\n&quot;))
 end</code></pre></div><p>Nyní už stačí jen vytvořit a natrénovat model a začít generovat! To je 3. a poslední krok.</p><div><pre><code class="language-julia">MODEL_DE = combine(loadfiles(filenames_de)...)
-gensentences(MODEL_DE, 4)</code></pre><pre><code class="language-none">Und wenn sie in meiner Muhme der Luft, Die haben keine Gewalt!
-Faust. Hilft hier noch nie geschehn; Es irrt der Felsenspalte?
-Zum jüngsten Tag Der Wein in’s Gebein!
-Mir wird es diese Zeichen des Freundes Stimme!</code></pre></div><p>A podobně také ve francouzštině:</p><div><pre><code class="language-julia">MODEL_FR = combine(loadfiles(filenames_fr)...)
-gensentences(MODEL_FR, 4)</code></pre><pre><code class="language-none">Elle aurait sacrifié toute sorte, qui croirait que don Diego.
-Chermidy pleura quelques mois pour adoucir les officiers et lavenir.
-De largent, les animaux, ne parle dHonorine!
-Anatole nétait pas de distinction descendaient à M.</code></pre></div><hr/><div class="footnote" id="footnote-1"><a href="#footnote-1"><strong>[1]</strong></a><p>Všechny texty použité v této demonstraci pocházejí z <a href="https://www.gutenberg.org">projektu Gutenberg</a>.</p></div><footer><hr/><a class="previous" href="../implementation/"><span class="direction">Previous</span><span class="title">Implementace</span></a><a class="next" href="../public/"><span class="direction">Next</span><span class="title">Veřejné symboly (EN)</span></a></footer></article></body></html>
+gensentences(MODEL_DE, 4)</code></pre><pre><code class="language-none">das genug; Die liebe schöne Stunden säumen.
+Es sagen’s aller tödlich feinen Geruch, Schnuffelt immer nach Hause bleib’s beym Wort.
+Was wählt ihr Verbrechen war so sehr gütig seyd. Gehn vorüber. Faust. Herein denn!
+Des Menschen Blut, Will ich noch nie so davon; Denn von ihm keiner!</code></pre></div><p>A podobně také ve francouzštině:</p><div><pre><code class="language-julia">MODEL_FR = combine(loadfiles(filenames_fr)...)
+gensentences(MODEL_FR, 4)</code></pre><pre><code class="language-none">Il se fit une promenade hygiénique de si souvent que je craignais de Corfou.
+Il sintéressa aux domestiques, ce quon pût satisfaire.
+Il ne jamais la villa Dandolo, contait des plumpuddings.
+ajouta au salon; moi, ton fils; mais je suis chez vous!</code></pre></div><hr/><div class="footnote" id="footnote-1"><a href="#footnote-1"><strong>[1]</strong></a><p>Všechny texty použité v této demonstraci pocházejí z <a href="https://www.gutenberg.org">projektu Gutenberg</a>.</p></div><footer><hr/><a class="previous" href="../implementation/"><span class="direction">Previous</span><span class="title">Implementace</span></a><a class="next" href="../public/"><span class="direction">Next</span><span class="title">Veřejné symboly (EN)</span></a></footer></article></body></html>

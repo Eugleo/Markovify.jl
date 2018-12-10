@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Implementace",
     "title": "Trénování",
     "category": "section",
-    "text": "Vstupní tokeny je nutno zanalyzovat a vytvořit z nich Model. K tomu slouží funkce build. Každý model má pevně určený řád (order), který je nutné funkci build předat jako argument.Funkce poté prochází jednotlivá pole tokenů, vždy zkoumák-tici tokenů v jednom poli — ta tvoří stav. Tento stav bude klíčem ve slovníku nodes — všechny klíče tohoto slovníku tvoří kompletní stavový prostor Markovova řetězce. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník TokenOccurences párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocné, konkrétně symboly :begin a :end, které vyznačují začátek a konec \"věty\" (tedy jednoho z dílčích polí). Každé pole tedy bude vypadat takto: [:begin :begin ... :begin token token ... token :end].Účel symbolu :end je jednoduchý: ukončuje náhodné procházení modelu ve funkci walk.\nPočet symbolů :begin na začátku pole je roven řádu celého řetězce. To je nutné proto, abych nemusel ukládat počáteční stavy do speciální proměnné. Klíče i hodnoty slovníku by totiž měly mít všechny stejný typ.Původně měla struktura Model ještě jedno pole, které bylo speciálně vyhrazené pro počáteční stavy (a :begin nebylo používáno). Nastal by pak ale drobný problém, kdyby uživatel chtěl využít externí balíček pro ukládání do souboru JSON, protože Model by byl reprezentován dvěma slovníky a bylo by nutné toto při ukládání ošeřit. Uchýlil jsem se proto v pozdějších verzích k tomuto jednoslovníkovému řešení; uživateli teď stačí uložit do souboru pouze slovník nodes a využít funkci makefromdict k opětovné rekonstrukci modelu.Místo symbolu :begin byl využíván v dřívějších verzích přímo string \"~~BEGIN~~\". Pokud by však uživatel z nějakého důvodu toto slovo měl ve vstupním textu, byl by klidně i prostředek věty omylem pokládán za počáteční stav. Z toho důvodu nakonec používám datový typ Symbol, který je podobný symbolům v LISP."
+    "text": "Vstupní tokeny je nutno zanalyzovat a vytvořit z nich Model. K tomu slouží konstruktor Model. Každý model má pevně určený řád (order), který je nutné této funkci předat jako argument.Funkce poté prochází jednotlivá pole tokenů, vždy zkoumák-tici tokenů v jednom poli — ta tvoří stav. Tento stav bude klíčem ve slovníku nodes — všechny klíče tohoto slovníku tvoří kompletní stavový prostor Markovova řetězce. Hodnota pod tímto klíčem bude další slovník, konkrétně slovník TokenOccurences párující vždy token a číslo představující počet, kolikrát se tento token za daným stavem vyskytl (>=1).Ještě před touto analýzou tokenů je nutné doplnit některé tokeny pomocné, konkrétně symboly :begin a :end, které vyznačují začátek a konec \"věty\" (tedy jednoho z dílčích polí). Každé pole tedy bude vypadat takto: [:begin :begin ... :begin token token ... token :end].Účel symbolu :end je jednoduchý: ukončuje náhodné procházení modelu ve funkci walk.\nPočet symbolů :begin na začátku pole je roven řádu celého řetězce. To je nutné proto, abych nemusel ukládat počáteční stavy do speciální proměnné. Klíče i hodnoty slovníku by totiž měly mít všechny stejný typ.Původně měla struktura Model ještě jedno pole, které bylo speciálně vyhrazené pro počáteční stavy (a :begin nebylo používáno). Nastal by pak ale drobný problém, kdyby uživatel chtěl využít externí balíček pro ukládání do souboru JSON, protože Model by byl reprezentován dvěma slovníky a bylo by nutné toto při ukládání ošeřit. Uchýlil jsem se proto v pozdějších verzích k tomuto jednoslovníkovému řešení; uživateli teď stačí uložit do souboru pouze slovník nodes a využít funkci Model k opětovné rekonstrukci modelu.Místo symbolu :begin byl využíván v dřívějších verzích přímo string \"~~BEGIN~~\". Pokud by však uživatel z nějakého důvodu toto slovo měl ve vstupním textu, byl by klidně i prostředek věty omylem pokládán za počáteční stav. Z toho důvodu nakonec používám datový typ Symbol, který je podobný symbolům v LISP."
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Lorem ipsum",
     "title": "Program",
     "category": "section",
-    "text": "Chceme vyprodukovat vlastní lorem ipsum, jedno ve francouzštině a druhé v němčině, abychom viděli, jak bude náš layout na plakát fungovat s různými jazyky. Trénovací texty uložíme do složky assets/corpora/*jazyk*/ pod názvy src1.txt až src3.txt.[1]Obecně se každý program bude držet následující struktury:Načíst text a převést jej do tokenů.\nNatrénovat na tokenech model Markovova řetězce.\nVygenerovat text pomocí modelu.Nejprve je nutné importovat oba moduly, které tento balíček obsahuje. Pomocí klíčového slova using je naimportujete včetně jejich exportovaných symbolů. Pozn: Ve vašem programu pište jména modulů bez tečky před jménem.include(\"../src/Tokenizer.jl\") #hide\ninclude(\"../src/MarkovChains.jl\") #hide\n\nusing .MarkovChains\nusing .Tokenizer\n\nfilenames_fr = [\n    \"assets/corpora/french/src1.txt\",\n    \"assets/corpora/french/src2.txt\",\n    \"assets/corpora/french/src3.txt\"\n]\n\nfilenames_de = [\n    \"assets/corpora/german/src1.txt\",\n    \"assets/corpora/german/src2.txt\",\n    \"assets/corpora/german/src3.txt\"\n]\n\nnothing #hideModelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce combine.Protože funkce build očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí tokenize a words. Tím dokončíme krok 1.function loadfiles(filenames)\n    # Return an iterator\n    return (\n        open(filename) do f\n            # Tokenize on words\n            tokens = tokenize(read(f, String), words)\n            return build(tokens; order=1)\n        end\n        for filename in filenames\n    )\nend\n\nnothing #hideKdyž už máme model, chtěli bychom pomocí něj vygenerovat náhodné věty. Definujeme tedy pomocnou funkci, která nám pomocí modelu vygeneruje n vět a ještě zkontroluje, zda nejsou moc krátké či dlouhé. Z toho sestává krok 2.function gensentences(model, n)\n    sentences = []\n    # Stop only after n sentences were generated\n    # and passed through the length test\n    while length(sentences) < n\n        seq = walk(model)\n        # Add the sentence to the array iff its length is ok\n        if length(seq) > 5 && length(seq) < 15\n            push!(sentences, join(seq, \" \"))\n        end\n    end\n    # Print each sentence on its own line\n    println(join(sentences, \"\\n\"))\nend\n\nnothing #hideNyní už stačí jen vytvořit a natrénovat model a začít generovat! To je 3. a poslední krok.MODEL_DE = combine(loadfiles(filenames_de)...)\ngensentences(MODEL_DE, 4)A podobně také ve francouzštině:MODEL_FR = combine(loadfiles(filenames_fr)...)\ngensentences(MODEL_FR, 4)[1]: Všechny texty použité v této demonstraci pocházejí z projektu Gutenberg."
+    "text": "Chceme vyprodukovat vlastní lorem ipsum, jedno ve francouzštině a druhé v němčině, abychom viděli, jak bude náš layout na plakát fungovat s různými jazyky. Trénovací texty uložíme do složky assets/corpora/*jazyk*/ pod názvy src1.txt až src3.txt.[1]Obecně se každý program bude držet následující struktury:Načíst text a převést jej do tokenů.\nNatrénovat na tokenech model Markovova řetězce.\nVygenerovat text pomocí modelu.Nejprve je nutné importovat oba moduly, které tento balíček obsahuje. Pomocí klíčového slova using je naimportujete včetně jejich exportovaných symbolů. Pozn: Ve vašem programu pište jména modulů bez tečky před jménem.include(\"../src/Tokenizer.jl\") #hide\ninclude(\"../src/MarkovChains.jl\") #hide\n\nusing .MarkovChains\nusing .Tokenizer\n\nfilenames_fr = [\n    \"assets/corpora/french/src1.txt\",\n    \"assets/corpora/french/src2.txt\",\n    \"assets/corpora/french/src3.txt\"\n]\n\nfilenames_de = [\n    \"assets/corpora/german/src1.txt\",\n    \"assets/corpora/german/src2.txt\",\n    \"assets/corpora/german/src3.txt\"\n]\n\nnothing #hideModelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce combine.Protože funkce Model očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí tokenize a words. Tím dokončíme krok 1.function loadfiles(filenames)\n    # Return an iterator\n    return (\n        open(filename) do f\n            # Tokenize on words\n            tokens = tokenize(read(f, String); on=words)\n            return Model(tokens; order=1)\n        end\n        for filename in filenames\n    )\nend\n\nnothing #hideKdyž už máme model, chtěli bychom pomocí něj vygenerovat náhodné věty. Definujeme tedy pomocnou funkci, která nám pomocí modelu vygeneruje n vět a ještě zkontroluje, zda nejsou moc krátké či dlouhé. Z toho sestává krok 2.function gensentences(model, n)\n    sentences = []\n    # Stop only after n sentences were generated\n    # and passed through the length test\n    while length(sentences) < n\n        seq = walk(model)\n        # Add the sentence to the array iff its length is ok\n        if length(seq) > 5 && length(seq) < 15\n            push!(sentences, join(seq, \" \"))\n        end\n    end\n    # Print each sentence on its own line\n    println(join(sentences, \"\\n\"))\nend\n\nnothing #hideNyní už stačí jen vytvořit a natrénovat model a začít generovat! To je 3. a poslední krok.MODEL_DE = combine(loadfiles(filenames_de)...)\ngensentences(MODEL_DE, 4)A podobně také ve francouzštině:MODEL_FR = combine(loadfiles(filenames_fr)...)\ngensentences(MODEL_FR, 4)[1]: Všechny texty použité v této demonstraci pocházejí z projektu Gutenberg."
 },
 
 {
@@ -177,11 +177,27 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "public/#MarkovChains.build-Union{Tuple{Array{#s18,1} where #s18<:Array{T,1}}, Tuple{T}} where T",
+    "location": "public/#MarkovChains.Model",
     "page": "Veřejné symboly (EN)",
-    "title": "MarkovChains.build",
+    "title": "MarkovChains.Model",
+    "category": "type",
+    "text": "The datastructure of the Markov chain. Encodes all the different states and the probabilities of going from one to another as a dictionary. The keys are the states, the values are the respective TokenOccurences dictionaries. Those are dictionaries which say how many times was a token found immediately after the state.\n\nFields\n\norder is the number of tokens in a State\nnodes is a dictionary pairing State and its respective\n\nTokenOccurences dictionary.\n\n\n\n\n\n"
+},
+
+{
+    "location": "public/#MarkovChains.Model-Tuple{Any}",
+    "page": "Veřejné symboly (EN)",
+    "title": "MarkovChains.Model",
     "category": "method",
-    "text": "build(suptokens; order=2, weight=stdweight)\n\nTrains a Markov chain on an array of arrays of tokens (suptokens). Optionally an order of the chain can be supplied, that is the number of tokens in one state. A weight function of general type func(::State{T}, ::Token{T})::Int can be supplied to be used to bias the weights based on the state or token.\n\n\n\n\n\n"
+    "text": "Model(nodes)\n\nReturn a model constructed from the given nodes. Can be used to reconstruct a model object from its nodes, e.g. if the nodes were saved in a JSON file.\n\n\n\n\n\n"
+},
+
+{
+    "location": "public/#MarkovChains.Model-Union{Tuple{Array{#s18,1} where #s18<:Array{T,1}}, Tuple{T}} where T",
+    "page": "Veřejné symboly (EN)",
+    "title": "MarkovChains.Model",
+    "category": "method",
+    "text": "Model(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight)\n\nReturns a Model trained on an array of arrays of tokens (suptokens). Optionally an order of the chain can be supplied; that is the number of tokens in one state. A weight function of general type func(::State{T}, ::Token{T}) -> Int can be supplied to be used to bias the weights based on the state or token value.\n\n\n\n\n\n"
 },
 
 {
@@ -190,22 +206,6 @@ var documenterSearchIndex = {"docs": [
     "title": "MarkovChains.combine",
     "category": "method",
     "text": "combine(chain, others)\n\nReturn a Model which is a combination of all of the models provided. All of the arguments should have the same order. The nodes of all the Models are merged using the function merge.\n\n\n\n\n\n"
-},
-
-{
-    "location": "public/#MarkovChains.makefromdict-Tuple{Any}",
-    "page": "Veřejné symboly (EN)",
-    "title": "MarkovChains.makefromdict",
-    "category": "method",
-    "text": "makefromdict(nodes)\n\nReturn a model constructed from the given nodes. Can be used to reconstruct a model object from its nodes, e.g. if the nodes were saved in a JSON file.\n\n\n\n\n\n"
-},
-
-{
-    "location": "public/#MarkovChains.state_with_beginning-Tuple{Any,Any}",
-    "page": "Veřejné symboly (EN)",
-    "title": "MarkovChains.state_with_beginning",
-    "category": "method",
-    "text": "state_with_beginning(model, tokens; strict=false)\n\nAttempts to return a random valid state of model that begins with tokens. If strict is false and the model doesn\'t have any state that begins with tokens, the function shortens the tokens (cuts the last token) to lower the requirements and tries to find some valid state again.\n\n\n\n\n\n"
 },
 
 {
@@ -257,7 +257,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "public/#Tokenizer.to_letters-Tuple{Array{#s13,1} where #s13<:AbstractString}",
+    "location": "public/#Tokenizer.to_letters-Tuple{Array{#s12,1} where #s12<:AbstractString}",
     "page": "Veřejné symboly (EN)",
     "title": "Tokenizer.to_letters",
     "category": "method",
@@ -281,11 +281,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "public/#Tokenizer.tokenize",
+    "location": "public/#Tokenizer.tokenize-Tuple{Any}",
     "page": "Veřejné symboly (EN)",
     "title": "Tokenizer.tokenize",
-    "category": "function",
-    "text": "tokenize(inp[, func=letters])\n\nSplit the text into SupTokens (list of lists of tokens). An optional function of general type func(::Any)::Vector{Vector{Any}} can be provided to be used for the tokenization.\n\nFor possible combinators which can be composed to obtain func, see: to_lines, to_sentences, to_letters, to_words, cleanup.\n\n\n\n\n\n"
+    "category": "method",
+    "text": "tokenize(text[, on=letters])\n\nSplit text into SupTokens (array of arrays of tokens). An optional function of general type func(::Any) -> Vector{Vector{Any}} can be provided to be used for the tokenization.\n\nFor possible combinators which can be composed to obtain func, see: to_lines, to_sentences, to_letters, to_words, cleanup.\n\n\n\n\n\n"
 },
 
 {
@@ -329,14 +329,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "internals/#MarkovChains.Model",
-    "page": "Interní symboly (EN)",
-    "title": "MarkovChains.Model",
-    "category": "type",
-    "text": "The datastructure of the Markov chain. Encodes all the different states and the probabilities of going from one to another as a dictionary. The keys are the states, the values are the respective TokenOccurences dictionaries. Those are dictionaries which say how many times was a token found immediately after the state.\n\nFields\n\norder is the number of tokens in a State\nnodes is a dictionary pairing State and its respective\n\nTokenOccurences dictionary.\n\n\n\n\n\n"
-},
-
-{
     "location": "internals/#MarkovChains.State",
     "page": "Interní symboly (EN)",
     "title": "MarkovChains.State",
@@ -369,11 +361,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "internals/#MarkovChains.indexof-Tuple{Any,Any}",
+    "location": "internals/#MarkovChains.indexin-Tuple{Any,Any}",
     "page": "Interní symboly (EN)",
-    "title": "MarkovChains.indexof",
+    "title": "MarkovChains.indexin",
     "category": "method",
-    "text": "indexof(array)\n\nGiven a sorted array, return the index on which n would be inserted in should the insertion preserve the sorting.\n\n\n\n\n\n"
+    "text": "indexin(array)\n\nGiven a sorted array, return the index on which n would be inserted in should the insertion preserve the sorting.\n\n\n\n\n\n"
 },
 
 {
@@ -393,6 +385,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "internals/#MarkovChains.state_with_prefix-Tuple{Any,Any}",
+    "page": "Interní symboly (EN)",
+    "title": "MarkovChains.state_with_prefix",
+    "category": "method",
+    "text": "state_with_prefix(model, prefix; strict=false)\n\nAttempts to return a random valid state of model that begins with tokens. If strict is false and the model doesn\'t have any state that begins with tokens, the function shortens the tokens (cuts the last token) to lower the requirements and tries to find some valid state again.\n\n\n\n\n\n"
+},
+
+{
     "location": "internals/#MarkovChains.states_with_suffix-Tuple{Any,Any}",
     "page": "Interní symboly (EN)",
     "title": "MarkovChains.states_with_suffix",
@@ -401,11 +401,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "internals/#MarkovChains.stdweight-Union{Tuple{T}, Tuple{Any,Any}} where T",
+    "location": "internals/#MarkovChains.stdweight-Tuple{Any,Any}",
     "page": "Interní symboly (EN)",
     "title": "MarkovChains.stdweight",
     "category": "method",
-    "text": "stdweight(state, token)\n\nA constant 1. Used as a placeholder function in build to represent unbiased weight function.\n\n\n\n\n\n"
+    "text": "stdweight(state, token)\n\nA constant 1. Used as a placeholder function in Model to represent unbiased weight function.\n\n\n\n\n\n"
 },
 
 {
