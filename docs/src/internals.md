@@ -6,7 +6,7 @@ The following are the private symbols from the module `MarkovChains`. Most of th
 ```@autodocs
 Modules = [MarkovChains]
 Public = false
-Order   = [:type, :function]
+Order   = [:constant, :type, :function]
 ```
 
 ## Module Tokenizer
@@ -15,5 +15,5 @@ The following are the private symbols from the module `Tokenizer`.
 ```@autodocs
 Modules = [Tokenizer]
 Public = false
-Order   = [:type, :function]
+Order   = [:constant, :type, :function]
 ```
