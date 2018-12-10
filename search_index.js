@@ -189,7 +189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Veřejné symboly (EN)",
     "title": "MarkovChains.Model",
     "category": "method",
-    "text": "Model(nodes)\n\nReturn a model constructed from the given nodes. Can be used to reconstruct a model object from its nodes, e.g. if the nodes were saved in a JSON file.\n\n\n\n\n\n"
+    "text": "Model(nodes)\n\nReturn a model constructed from nodes. Can be used to reconstruct a model object from its nodes, e.g. if the nodes were saved in a JSON file.\n\n\n\n\n\n"
 },
 
 {
@@ -197,7 +197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Veřejné symboly (EN)",
     "title": "MarkovChains.Model",
     "category": "method",
-    "text": "Model(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight)\n\nReturns a Model trained on an array of arrays of tokens (suptokens). Optionally an order of the chain can be supplied; that is the number of tokens in one state. A weight function of general type func(::State{T}, ::Token{T}) -> Int can be supplied to be used to bias the weights based on the state or token value.\n\n\n\n\n\n"
+    "text": "Model(suptokens::Vector{<:Vector{T}}; order=2, weight=stdweight)\n\nReturn a Model trained on an array of arrays of tokens (suptokens). Optionally an order of the chain can be supplied; that is the number of tokens in one state. A weight function of general type func(::State{T}, ::Token{T}) -> Int can be supplied to be used to bias the weights based on the state or token value.\n\n\n\n\n\n"
 },
 
 {
