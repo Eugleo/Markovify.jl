@@ -49,9 +49,8 @@ Return a Model which is a combination of all of the models provided. All of the
 arguments should have the same `order`. The nodes of all the Models are merged
 using the function `merge`.
 """
-function combine(chain, others...) where T
-    nodes = merge(chain.nodes for chain in others)
-    return Model(chain.order, nodes)
+function combine(chain, others...)
+    return Model(chain.order, merge(chain.nodes, map(ch -> ch.nodes, others)...))
 end
 
 """
@@ -89,7 +88,7 @@ end
 """
     build(suptokens; order=2, weight=stdweight)
 
-Trains a Markov chain on an array of arrays of tokens (suptokens).
+Trains a Markov chain on an array of arrays of [`tokens`](@ref Token) (`suptokens`).
 Optionally an `order` of the chain can be supplied, that is
 the number of tokens in one state. A weight function of general
 type `func(::State{T}, ::Token{T})::Int` can be supplied to be used
