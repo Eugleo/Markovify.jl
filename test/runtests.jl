@@ -1,8 +1,8 @@
 module Tests
 
 include("../src/Tokenizer.jl")
-include("../src/MarkovChains.jl")
-using .Tokenizer, .MarkovChains, Test
+include("../src/Markovify.jl")
+using .Tokenizer, .Markovify, Test
 
 #=
 
@@ -25,7 +25,7 @@ text = "ABC.DAB.\n ACDA"
 
 #=
 
-Tests for the module MarkovChains
+Tests for the module Markovify
 
 =#
 
@@ -48,15 +48,15 @@ model = Model(tokens; order=1)
 
 model2 = Model(tokens; order=2)
 
-@test MarkovChains.states_with_suffix(model2, ["."]) == [
+@test Markovify.states_with_suffix(model2, ["."]) == [
     ["B", "."],
     ["C", "."]
 ]
 
-@test MarkovChains.state_with_prefix(model2, ["B"]) in [
+@test Markovify.state_with_prefix(model2, ["B"]) in [
     ["B", "."],
     ["B", "C"]
 ]
 
-@test MarkovChains.indexin(collect(-1:12), 10) == 12
+@test Markovify.indexin(collect(-1:12), 10) == 12
 end

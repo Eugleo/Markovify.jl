@@ -1,8 +1,8 @@
 push!(LOAD_PATH, "../src/")
-using Documenter, MarkovChains, Tokenizer
+using Documenter, Markovify, Tokenizer
 
 makedocs(
-    sitename="MarkovChains.jl",
+    sitename="Markovify.jl",
     assets=["assets/favicon.ico"],
     authors = "Evžen Wybitul",
     pages = [

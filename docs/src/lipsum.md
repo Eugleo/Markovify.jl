@@ -19,9 +19,9 @@ Nejprve je nutné importovat oba moduly, které tento balíček obsahuje. Pomoc�
 
 ```@example 1
 include("../src/Tokenizer.jl") #hide
-include("../src/MarkovChains.jl") #hide
+include("../src/Markovify.jl") #hide
 
-using .MarkovChains
+using .Markovify
 using .Tokenizer
 
 filenames_fr = [

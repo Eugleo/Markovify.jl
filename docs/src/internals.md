@@ -1,10 +1,10 @@
 # Internal Documentation
 
-## Module MarkovChains
-The following are the private symbols from the module `MarkovChains`. Most of the users shouldn't really need those.
+## Module Markovify
+The following are the private symbols from the module `Markovify`. Most of the users shouldn't really need those.
 
 ```@autodocs
-Modules = [MarkovChains]
+Modules = [Markovify]
 Public = false
 Order   = [:constant, :type, :function]
 ```

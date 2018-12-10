@@ -1,4 +1,4 @@
-# MarkovChains.jl
+# Markovify.jl
 
 Generování náhodného textu na bázi textu trénovacího.
 
@@ -14,8 +14,8 @@ vět, i delších textů, a to v jakémkoli jazyce. Balíček je navrhnut tak, a
 
 ## Moduly
 
-Balíček exportuje dva moduly, Tokenizer a MarkovChains.
+Balíček exportuje dva moduly, Tokenizer a Markovify.
 
-Modul [Tokenizer](@ref pub_tokenizer) slouží k rozdělení jednolitého textu na menší části, takzvané *tokeny*. To je nutné proto, že modul MarkovChains umí pracovat právě pouze s polem polí takovýchto tokenů. V modulu se nechází několikero funkcí, které lze skládat a které nabízejí různé způsoby rozkládání textu.
+Modul [Tokenizer](@ref pub_tokenizer) slouží k rozdělení jednolitého textu na menší části, takzvané *tokeny*. To je nutné proto, že modul Markovify umí pracovat právě pouze s polem polí takovýchto tokenů. V modulu se nechází několikero funkcí, které lze skládat a které nabízejí různé způsoby rozkládání textu.
 
-Modul [MarkovChains](@ref pub_markov) dovoluje uživateli vytvořit [`Model`](@ref), který reprezentuje Markovův řetězec. Pomocí modelu je pak možné generovat náhodný text, který sdílí s původním textem určité vlastnosti: většinou poměr znaků a délku slov/celků. Princip funkce je konkrétně popsán v oddílu [Popis principu funkce](@ref). Lze nastavit i řád modelu a tak regulovat, jak moc se bude generovaný text podobat tomu původnímu.
+Modul [Markovify](@ref pub_markov) dovoluje uživateli vytvořit [`Model`](@ref), který reprezentuje Markovův řetězec. Pomocí modelu je pak možné generovat náhodný text, který sdílí s původním textem určité vlastnosti: většinou poměr znaků a délku slov/celků. Princip funkce je konkrétně popsán v oddílu [Popis principu funkce](@ref). Lze nastavit i řád modelu a tak regulovat, jak moc se bude generovaný text podobat tomu původnímu.
