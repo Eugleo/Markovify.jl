@@ -72,11 +72,11 @@ function to_words(tokens::Vector{<:AbstractString}; keeppunctuation=true)
 end
 
 """
-    cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars="\\n-_()[]{}<>–—\$=\'\"„“\r\t")
+    cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars="»«\\n-_()[]{}<>–—\$=\'\"„“\r\t")
 
 Remove all characters that are in `badchars` from all tokens in `suptokens`.
 """
-function cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars="\n-_()[]{}<>–—\$=\'\"„“\r\t")
+function cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars="»«\n-_()[]{}<>–—\$=\'\"„“\r\t")
     cleanup_token(token) = filter(c -> !(c in badchars), token)
 
     return [
