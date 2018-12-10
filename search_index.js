@@ -149,7 +149,15 @@ var documenterSearchIndex = {"docs": [
     "page": "Lorem ipsum",
     "title": "Lorem ipsum",
     "category": "section",
-    "text": "Lorem ipsum je souhrnné označení pro text, který se sice podobá reálnému textu svou stavbou (tedy délkou slov, vět, poměrem samohlásek/souhlásek), ale který nedává smysl. Takový text se používá například v designu nebo typografii, kde by smysluplný text jen odváděl pozoronost. Originální lorem ipsum je latinský text, jehož první věta Lorem ipsum dolor sit amet, consectetur adipisici elit připomíná úsek z Ciceronovy tvorby."
+    "text": "note: Poznámka\nV této sekci najdete krátkou demonstraci toho, jak lze můj balíček používat.Lorem ipsum je souhrnné označení pro text, který se sice podobá reálnému textu svou stavbou (tedy délkou slov, vět, poměrem samohlásek/souhlásek), ale který nedává smysl. Takový text se používá například v designu nebo typografii, kde by smysluplný text jen odváděl pozoronost. Originální lorem ipsum je latinský text, jehož první věta Lorem ipsum dolor sit amet, consectetur adipisici elit připomíná úsek z Ciceronovy tvorby."
+},
+
+{
+    "location": "lipsum/#Program-1",
+    "page": "Lorem ipsum",
+    "title": "Program",
+    "category": "section",
+    "text": "Chceme vyprodukovat vlastní lorem ipsum, jedno ve francouzštině a druhé v němčině, abychom viděli, jak bude náš layout na plakát fungovat s různými jazyky. Trénovací texty uložíme do složky assets/corpora/*jazyk*/ pod názvy src1.txt až src3.txt.[1]Obecně se každý program bude držet následující struktury:Načíst text a převést jej do tokenů.\nNatrénovat na tokenech model Markovova řetězce.\nVygenerovat text pomocí modelu.Nejprve je nutné importovat oba moduly, které tento balíček obsahuje. Pomocí klíčového slova using je naimportujete včetně jejich exportovaných symbolů. Pozn: Ve vašem programu pište jména modulů bez tečky před jménem.include(\"../src/Tokenizer.jl\") #hide\ninclude(\"../src/MarkovChains.jl\") #hide\n\nusing .MarkovChains\nusing .Tokenizer\n\nfilenames_fr = [\n    \"assets/corpora/french/src1.txt\",\n    \"assets/corpora/french/src2.txt\",\n    \"assets/corpora/french/src3.txt\"\n]\n\nfilenames_de = [\n    \"assets/corpora/german/src1.txt\",\n    \"assets/corpora/german/src2.txt\",\n    \"assets/corpora/german/src3.txt\"\n]\n\nnothing #hideModelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce combine.Protože funkce build očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí tokenize a words. Tím dokončíme krok 1.function loadfiles(filenames)\n    # Return an iterator\n    return (\n        open(filename) do f\n            # Tokenize on words\n            tokens = tokenize(read(f, String), words)\n            return build(tokens; order=1)\n        end\n        for filename in filenames\n    )\nend\n\nnothing #hideKdyž už máme model, chtěli bychom pomocí něj vygenerovat náhodné věty. Definujeme tedy pomocnou funkci, která nám pomocí modelu vygeneruje n vět a ještě zkontroluje, zda nejsou moc krátké či dlouhé. Z toho sestává krok 2.function gensentences(model, n)\n    sentences = []\n    # Stop only after n sentences were generated\n    # and passed through the length test\n    while length(sentences) < n\n        seq = walk(model)\n        # Add the sentence to the array iff its length is ok\n        if length(seq) > 5 && length(seq) < 15\n            push!(sentences, join(seq, \" \"))\n        end\n    end\n    # Print each sentence on its own line\n    println(join(sentences, \"\\n\"))\nend\n\nnothing #hideNyní už stačí jen vytvořit a natrénovat model a začít generovat! To je 3. a poslední krok.MODEL_DE = combine(loadfiles(filenames_de)...)\ngensentences(MODEL_DE, 4)A podobně také ve francouzštině:MODEL_FR = combine(loadfiles(filenames_fr)...)\ngensentences(MODEL_FR, 4)[1]: Všechny texty použité v této demonstraci pocházejí z projektu Gutenberg."
 },
 
 {
@@ -177,7 +185,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "public/#MarkovChains.combine-Union{Tuple{T}, Tuple{Any,Vararg{Any,N} where N}} where T",
+    "location": "public/#MarkovChains.combine-Tuple{Any,Vararg{Any,N} where N}",
     "page": "Veřejné symboly (EN)",
     "title": "MarkovChains.combine",
     "category": "method",
@@ -229,7 +237,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Veřejné symboly (EN)",
     "title": "Tokenizer.cleanup",
     "category": "method",
-    "text": "cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars=\"\\n-_()[]{}<>–—$=\'\"„“\r	\")\n\nRemove all characters that are in badchars from all tokens in suptokens.\n\n\n\n\n\n"
+    "text": "cleanup(suptokens::Vector{<:Vector{<:AbstractString}}; badchars=\"»«\\n-_()[]{}<>–—$=\'\"„“\r	\")\n\nRemove all characters that are in badchars from all tokens in suptokens.\n\n\n\n\n\n"
 },
 
 {
@@ -310,6 +318,14 @@ var documenterSearchIndex = {"docs": [
     "title": "Internal Documentation",
     "category": "section",
     "text": ""
+},
+
+{
+    "location": "internals/#MarkovChains.Token",
+    "page": "Interní symboly (EN)",
+    "title": "MarkovChains.Token",
+    "category": "constant",
+    "text": "Token{T} = Union{Symbol, T}\n\nTokens can be of any type. They can also include symbols :begin and :end which are used to denote the beginning and end of a suptoken.\n\n\n\n\n\n"
 },
 
 {
@@ -405,7 +421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Interní symboly (EN)",
     "title": "Module MarkovChains",
     "category": "section",
-    "text": "The following are the private symbols from the module MarkovChains. Most of the users shouldn\'t really need those.Modules = [MarkovChains]\nPublic = false\nOrder   = [:type, :function]"
+    "text": "The following are the private symbols from the module MarkovChains. Most of the users shouldn\'t really need those.Modules = [MarkovChains]\nPublic = false\nOrder   = [:constant, :type, :function]"
 },
 
 {
@@ -421,7 +437,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Interní symboly (EN)",
     "title": "Module Tokenizer",
     "category": "section",
-    "text": "The following are the private symbols from the module Tokenizer.Modules = [Tokenizer]\nPublic = false\nOrder   = [:type, :function]"
+    "text": "The following are the private symbols from the module Tokenizer.Modules = [Tokenizer]\nPublic = false\nOrder   = [:constant, :type, :function]"
 },
 
 ]}
