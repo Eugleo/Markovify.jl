@@ -1,7 +1,7 @@
 # Popis principu funkce
 
 !!! note "Poznámka"
-    Tento text pojednává o obecném principu stojícímu za Markovovými řetězci a generováním textu z nich. Naopak implementaci tohoto obecného principu se věnuje oddíl [Popis implementace](@ref).
+    Tento text pojednává o obecném principu stojícímu za Markovovými řetězci a generováním textu z nich. Implementaci tohoto obecného principu se věnuje oddíl [Popis implementace](@ref).
 
 ## Markovův řetězec
 
@@ -13,14 +13,14 @@ P\left[X_{i} = x \vert X_1=x_1, X_2=x_2, \ldots, X_{i-1} = x_{i-1}\right] = P\le
 
 Jinými slovy, stav v okamžiku ``i`` závisí pouze na stavu v předchozím okamžiku.
 
-Tato takzvaná *markovovská vlastnost* dala Markovově *řetězci* jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého. Pro úplnost dodáváme, že Markovův řetězec se dá kromě grafu popsat také *maticí pravděpodobností přechodu* ``P``, kde ``p_{ij}`` označuje pravděpodobnost přechodu ze stavu ``i`` do stavu ``j``.
+Tato takzvaná *markovovská vlastnost* dala Markovově *řetězci* jeho jméno. Dovoluje nám znázornit celý systém orientovaným grafem, ve kterém vrcholy představují jednotlivé stavy systému a hrany mají hodnoty pravděpodobností přechodů z jednoho stavu do druhého. Pro úplnost je dobré dodat, že Markovův řetězec se dá kromě grafu popsat také *maticí pravděpodobností přechodu* ``P``, kde ``p_{ij}`` označuje pravděpodobnost přechodu ze stavu ``i`` do stavu ``j``.
 
 Pojem Markovův řetězec se dá dále rozšířit o takzvaný *řád*. Stav v okamžiku ``i`` v Markovově řetězci o řádu ``r`` závisí na všech stavech ``X_{i-1}, X_{i-2}, \ldots, X_{i-r}``.
 
 ## Generování textu
 
 Proces generování textu pomocí Markovova řetězce se skládá ze dvou částí:
-1. Vytvoření samotného řetězce na základě vstupního textu.
+1. Vytvoření řetězce na základě vstupního textu.
 2. Procházení vytvořeným grafem a postupné tvoření výstupu.
 
 ### Vytvoření grafu
