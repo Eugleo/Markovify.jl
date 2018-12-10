@@ -1,6 +1,6 @@
 # Public Documentation
 
-## Module MarkovChains
+## [Module MarkovChains](@id pub_markov)
 The following is the documentation of symbols which are exported from the `MarkovChains` module. The module is used to construct a Markov chain from the given list of lists of tokens and to walk through it, generating a random sequence of tokens along the way. Please see Příklady if you are looking for some usage examples.
 
 ```@autodocs
