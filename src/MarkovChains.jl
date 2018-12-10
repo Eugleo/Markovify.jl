@@ -234,34 +234,34 @@ function walker(model, init_state, init_accum, newstate=append_token)
 end
 
 """
-    state_with_beginning(model, tokens; strict=false)
+    state_with_prefix(model, prefix; strict=false)
 
 Attempts to return a random valid state of `model` that begins with `tokens`.
 If `strict` is `false` and the `model` doesn't have any state that begins
 with `tokens`, the function shortens the tokens (cuts the last token)
 to lower the requirements and tries to find some valid state again.
 """
-function state_with_beginning(model, tokens; strict=false)
+function state_with_prefix(model, prefix; strict=false)
     # The token sequence must be at most as long as the model's state
-    if length(tokens) > model.order
+    if length(prefix) > model.order
         message =
-            "The length of the initial state must be equal" *
+            "The length of the prefix must be equal" *
             "to or lower than the order of the model (i.e. $(model.order))"
         throw(DomainError(tokens, message))
     end
 
     # If the tokens are already a valid state, just return them
     # if the token sequence is too short, just fill in :begin to make a valid state
-    if haskey(model.nodes, [begseq(model.order - length(tokens)); tokens])
-        return [begseq(model.order - length(tokens)); tokens]
+    if haskey(model.nodes, [begseq(model.order - length(prefix)); prefix])
+        return [begseq(model.order - length(prefix)); prefix]
     end
 
-    hasprefix(ar, prefix) = ar[1:length(prefix)] == prefix
+    hasprefix(ar, pref) = ar[1:length(pref)] == pref
     # Try to cut out the last element of the token sequence
     # in order to find a valid state with this given prefix
-    function helper(prefix, states)
-        if prefix == [] return nothing end
-        states_with_prefix = (st for st in states if hasprefix(st, prefix))
+    function helper(pref, states)
+        if pref == [] return nothing end
+        states_with_prefix = (st for st in states if hasprefix(st, pref))
         if !isempty(states_with_prefix)
             # Return the non-empty iterator of valid states with iven prefix
             return states_with_prefix
@@ -269,11 +269,11 @@ function state_with_beginning(model, tokens; strict=false)
             # We didn't find any states with given prefix
             return nothing
         else
-            return helper(prefix[1:end-1], states)
+            return helper(pref[1:end-1], states)
         end
     end
 
-    valid_states = helper(tokens, keys(model.nodes))
+    valid_states = helper(prefix, keys(model.nodes))
     if valid_states != nothing
         return rand(collect(valid_states))
     else

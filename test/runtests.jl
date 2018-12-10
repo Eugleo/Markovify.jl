@@ -53,7 +53,7 @@ model2 = Model(tokens; order=2)
     ["C", "."]
 ]
 
-@test MarkovChains.state_with_beginning(model2, ["B"]) in [
+@test MarkovChains.state_with_prefix(model2, ["B"]) in [
     ["B", "."],
     ["B", "C"]
 ]
