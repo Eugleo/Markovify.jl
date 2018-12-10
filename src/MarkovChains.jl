@@ -54,12 +54,12 @@ function combine(chain, others...)
 end
 
 """
-    makefromdict(nodes)
+    Model(nodes)
 
 Return a model constructed from the given nodes. Can be used to reconstruct
 a model object from its nodes, e.g. if the nodes were saved in a JSON file.
 """
-function makefromdict(nodes)
+function Model(nodes)
     if isempty(nodes) return nothing end
     # Pick some state and get its length; that's the order of the model
     order = length(nodes[first(keys(nodes))])
