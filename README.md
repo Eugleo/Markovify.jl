@@ -7,11 +7,11 @@ Simple text generation in Julia.
 
 ## Installation
 
-It should be possible to install this package by using the normal Julia 1.0 `Pkg`. That means:
+You can install this package by using the Julia package manager. From the Julia REPL, type `]` to enter the Pkg REPL mode and run:
 
-1. Start Julia by running `julia` in terminal.
-2. Start package manager by pressing `]`.
-3. Enter `add Markovify`
+```
+pkg> add Markovify
+```
 
 ## Usage examples
 
