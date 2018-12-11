@@ -65,7 +65,7 @@ MODEL = combine(loadfiles(FILENAMES)...)
 gensentences(MODEL, 4)
 ```
 
-And the output is 4 lines of random sentences, similar to this example generated from three random French texts on [Project Gutenberg](gutenberg.org).
+And the output is 4 lines of random sentences, similar to this example generated from three random French texts on [Project Gutenberg](http://www.gutenberg.org).
 
 ```
 Mais elle exposa froidement le pria quelquun à dîner.
