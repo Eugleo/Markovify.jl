@@ -26,8 +26,8 @@ Let's say we want to build a simplistic [Lorem ipsum](https://cs.wikipedia.org/w
 Let's assume we have our training files in the directory `files`, named `src1`, `src2` and `src3`.
 
 ```julia
-using .Markovify
-using .Tokenizer
+using Markovify
+using Tokenizer
 
 # For each supplied file, make a model, and return an iterator of all such models
 # This function actually performs both step 1 and step 2
@@ -45,7 +45,7 @@ function loadfiles(filenames)
 end
 
 # Print n sentences generated with the model
-# This function is step 3
+# This function performs step 3
 function gensentences(model, n)
     sentences = []
     # Stop only after n sentences were generated
@@ -60,7 +60,7 @@ function gensentences(model, n)
 end
 
 # Now we just put them together
-FILENAMES = ["files/src1.txt, "files/src2.txt", "files/src3.txt"]
+FILENAMES = ["files/src1.txt", "files/src2.txt", "files/src3.txt"]
 MODEL = combine(loadfiles(FILENAMES)...)
 gensentences(MODEL, 4)
 ```
