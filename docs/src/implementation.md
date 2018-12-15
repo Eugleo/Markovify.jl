@@ -11,7 +11,7 @@ Generování textu se dá rozdělit na několik logických podcelků:
 
 ## Rozložení textu na tokeny
 
-Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například: `PoleVět{PoleSlov{Slova}}`. K tomu slouží modul [Tokenizer](@ref pub_tokenizer)), který nabízí několik jednoduchých kombinátorů, které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů.
+Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například: `PoleVět{PoleSlov{Slova}}`. K tomu slouží modul [Markovify.Tokenizer](@ref pub_tokenizer)), který nabízí několik jednoduchých kombinátorů, které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů.
 
 ## Trénování modelu na základě tokenů
 

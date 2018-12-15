@@ -9,8 +9,8 @@ Public = false
 Order   = [:constant, :type, :function]
 ```
 
-## Module Tokenizer
-The following are the private symbols from the module `Tokenizer`.
+## Module Markovify.Tokenizer
+The following are the private symbols from the module `Markovify.Tokenizer`.
 
 ```@autodocs
 Modules = [Tokenizer]

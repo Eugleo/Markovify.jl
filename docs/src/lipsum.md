@@ -22,7 +22,7 @@ include("../src/Tokenizer.jl") #hide
 include("../src/Markovify.jl") #hide
 
 using .Markovify
-using .Tokenizer
+using .Markovify.Tokenizer
 
 filenames_fr = [
     "assets/corpora/french/src1.txt",

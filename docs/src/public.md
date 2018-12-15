@@ -8,8 +8,8 @@ Modules = [Markovify]
 Private = false
 Order   = [:type, :function]
 ```
-## [Module Tokenizer](@id pub_tokenizer)
-The following symbols are exported from the `Tokenizer` module. This module is used to tokenize text into a list of lists of tokens, which is a format better suited for model training.
+## [Module Markovify.Tokenizer](@id pub_tokenizer)
+The following symbols are exported from the `Markovify.Tokenizer` module. This module is used to tokenize text into a list of lists of tokens, which is a format better suited for model training.
 
 ```@autodocs
 Modules = [Tokenizer]
