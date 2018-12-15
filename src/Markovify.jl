@@ -1,5 +1,7 @@
 module Markovify
 
+include("Tokenizer.jl")
+
 export Model, walk, walk2, combine, makefromdict, state_with_beginning
 
 """

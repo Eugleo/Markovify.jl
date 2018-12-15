@@ -1,5 +1,3 @@
-module Markovify
-
 module Tokenizer
 
 export tokenize,
@@ -113,7 +111,5 @@ into words, and then removes special characters. Please note that dots and
 commas are not removed.
 """
 words = cleanup ∘ to_words ∘ to_sentences
-
-end
 
 end
