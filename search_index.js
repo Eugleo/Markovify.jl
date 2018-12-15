@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Domovská stránka",
     "title": "Moduly",
     "category": "section",
-    "text": "Balíček exportuje dva moduly, Tokenizer a Markovify.Modul Tokenizer slouží k rozdělení jednolitého textu na menší části, takzvané tokeny. To je nutné proto, že modul Markovify umí pracovat právě pouze s polem polí takovýchto tokenů. V modulu se nechází několikero funkcí, které lze skládat a které nabízejí různé způsoby rozkládání textu.Modul Markovify dovoluje uživateli vytvořit Model, který reprezentuje Markovův řetězec. Pomocí modelu je pak možné generovat náhodný text, který sdílí s původním textem určité vlastnosti: většinou poměr znaků a délku slov/celků. Princip funkce je konkrétně popsán v oddílu Popis principu funkce. Lze nastavit i řád modelu a tak regulovat, jak moc se bude generovaný text podobat tomu původnímu."
+    "text": "Balíček exportuje dva moduly, Tokenizer a Markovify.Modul Markovify.Tokenizer slouží k rozdělení jednolitého textu na menší části, takzvané tokeny. To je nutné proto, že modul Markovify umí pracovat právě pouze s polem polí takovýchto tokenů. V modulu se nechází několikero funkcí, které lze skládat a které nabízejí různé způsoby rozkládání textu.Modul Markovify dovoluje uživateli vytvořit Model, který reprezentuje Markovův řetězec. Pomocí modelu je pak možné generovat náhodný text, který sdílí s původním textem určité vlastnosti: většinou poměr znaků a délku slov/celků. Princip funkce je konkrétně popsán v oddílu Popis principu funkce. Lze nastavit i řád modelu a tak regulovat, jak moc se bude generovaný text podobat tomu původnímu."
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Implementace",
     "title": "Rozložení textu na tokeny",
     "category": "section",
-    "text": "Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například: PoleVět{PoleSlov{Slova}}. K tomu slouží modul Tokenizer), který nabízí několik jednoduchých kombinátorů, které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů."
+    "text": "Text je před zpracováním nutno rozdělit na menší celky. Má konkrétní implementace modelu počítá s tím, že text bude rozložen na pole polí tokenů, například: PoleVět{PoleSlov{Slova}}. K tomu slouží modul Markovify.Tokenizer), který nabízí několik jednoduchých kombinátorů, které může uživatel použít k rozdělení textu podle vět, řádků, slov a podobně. Jejich implementace není ničím zajímavá, jedná se o one-line funkce pracující na základě regexů."
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Lorem ipsum",
     "title": "Program",
     "category": "section",
-    "text": "Chceme vyprodukovat vlastní lorem ipsum, jedno ve francouzštině a druhé v němčině, abychom viděli, jak bude náš layout na plakát fungovat s různými jazyky. Trénovací texty uložíme do složky assets/corpora/*jazyk*/ pod názvy src1.txt až src3.txt.[1]Obecně se každý program bude držet následující struktury:Načíst text a převést jej do tokenů.\nNatrénovat na tokenech model Markovova řetězce.\nVygenerovat text pomocí modelu.Nejprve je nutné importovat oba moduly, které tento balíček obsahuje. Pomocí klíčového slova using je naimportujete včetně jejich exportovaných symbolů. Pozn: Ve vašem programu pište jména modulů bez tečky před jménem.include(\"../src/Tokenizer.jl\") #hide\ninclude(\"../src/Markovify.jl\") #hide\n\nusing .Markovify\nusing .Tokenizer\n\nfilenames_fr = [\n    \"assets/corpora/french/src1.txt\",\n    \"assets/corpora/french/src2.txt\",\n    \"assets/corpora/french/src3.txt\"\n]\n\nfilenames_de = [\n    \"assets/corpora/german/src1.txt\",\n    \"assets/corpora/german/src2.txt\",\n    \"assets/corpora/german/src3.txt\"\n]\n\nnothing #hideModelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce combine.Protože funkce Model očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí tokenize a words. Tím dokončíme krok 1.function loadfiles(filenames)\n    # Return an iterator\n    return (\n        open(filename) do f\n            # Tokenize on words\n            tokens = tokenize(read(f, String); on=words)\n            return Model(tokens; order=1)\n        end\n        for filename in filenames\n    )\nend\n\nnothing #hideKdyž už máme model, chtěli bychom pomocí něj vygenerovat náhodné věty. Definujeme tedy pomocnou funkci, která nám pomocí modelu vygeneruje n vět a ještě zkontroluje, zda nejsou moc krátké či dlouhé. Z toho sestává krok 2.function gensentences(model, n)\n    sentences = []\n    # Stop only after n sentences were generated\n    # and passed through the length test\n    while length(sentences) < n\n        seq = walk(model)\n        # Add the sentence to the array iff its length is ok\n        if length(seq) > 5 && length(seq) < 15\n            push!(sentences, join(seq, \" \"))\n        end\n    end\n    # Print each sentence on its own line\n    println(join(sentences, \"\\n\"))\nend\n\nnothing #hideNyní už stačí jen vytvořit a natrénovat model a začít generovat! To je 3. a poslední krok.MODEL_DE = combine(loadfiles(filenames_de)...)\ngensentences(MODEL_DE, 4)A podobně také ve francouzštině:MODEL_FR = combine(loadfiles(filenames_fr)...)\ngensentences(MODEL_FR, 4)[1]: Všechny texty použité v této demonstraci pocházejí z projektu Gutenberg."
+    "text": "Chceme vyprodukovat vlastní lorem ipsum, jedno ve francouzštině a druhé v němčině, abychom viděli, jak bude náš layout na plakát fungovat s různými jazyky. Trénovací texty uložíme do složky assets/corpora/*jazyk*/ pod názvy src1.txt až src3.txt.[1]Obecně se každý program bude držet následující struktury:Načíst text a převést jej do tokenů.\nNatrénovat na tokenech model Markovova řetězce.\nVygenerovat text pomocí modelu.Nejprve je nutné importovat oba moduly, které tento balíček obsahuje. Pomocí klíčového slova using je naimportujete včetně jejich exportovaných symbolů. Pozn: Ve vašem programu pište jména modulů bez tečky před jménem.include(\"../src/Tokenizer.jl\") #hide\ninclude(\"../src/Markovify.jl\") #hide\n\nusing .Markovify\nusing .Markovify.Tokenizer\n\nfilenames_fr = [\n    \"assets/corpora/french/src1.txt\",\n    \"assets/corpora/french/src2.txt\",\n    \"assets/corpora/french/src3.txt\"\n]\n\nfilenames_de = [\n    \"assets/corpora/german/src1.txt\",\n    \"assets/corpora/german/src2.txt\",\n    \"assets/corpora/german/src3.txt\"\n]\n\nnothing #hideModelové texty, na kterých se bude náš řetězec trénovat, máme uložené v několika souborech. Je tedy dobré definovat funkci, která bude umět postavit modely i z více souborů. Tyto modely poté můžeme spojit pomocí funkce combine.Protože funkce Model očekává pole polí tokenů, musíme text tokenizovat. K tomu využijeme funkcí tokenize a words. Tím dokončíme krok 1.function loadfiles(filenames)\n    # Return an iterator\n    return (\n        open(filename) do f\n            # Tokenize on words\n            tokens = tokenize(read(f, String); on=words)\n            return Model(tokens; order=1)\n        end\n        for filename in filenames\n    )\nend\n\nnothing #hideKdyž už máme model, chtěli bychom pomocí něj vygenerovat náhodné věty. Definujeme tedy pomocnou funkci, která nám pomocí modelu vygeneruje n vět a ještě zkontroluje, zda nejsou moc krátké či dlouhé. Z toho sestává krok 2.function gensentences(model, n)\n    sentences = []\n    # Stop only after n sentences were generated\n    # and passed through the length test\n    while length(sentences) < n\n        seq = walk(model)\n        # Add the sentence to the array iff its length is ok\n        if length(seq) > 5 && length(seq) < 15\n            push!(sentences, join(seq, \" \"))\n        end\n    end\n    # Print each sentence on its own line\n    println(join(sentences, \"\\n\"))\nend\n\nnothing #hideNyní už stačí jen vytvořit a natrénovat model a začít generovat! To je 3. a poslední krok.MODEL_DE = combine(loadfiles(filenames_de)...)\ngensentences(MODEL_DE, 4)A podobně také ve francouzštině:MODEL_FR = combine(loadfiles(filenames_fr)...)\ngensentences(MODEL_FR, 4)[1]: Všechny texty použité v této demonstraci pocházejí z projektu Gutenberg."
 },
 
 {
@@ -299,9 +299,9 @@ var documenterSearchIndex = {"docs": [
 {
     "location": "public/#pub_tokenizer-1",
     "page": "Veřejné symboly (EN)",
-    "title": "Module Tokenizer",
+    "title": "Module Markovify.Tokenizer",
     "category": "section",
-    "text": "The following symbols are exported from the Tokenizer module. This module is used to tokenize text into a list of lists of tokens, which is a format better suited for model training.Modules = [Tokenizer]\nPrivate = false\nOrder   = [:type, :function]"
+    "text": "The following symbols are exported from the Markovify.Tokenizer module. This module is used to tokenize text into a list of lists of tokens, which is a format better suited for model training.Modules = [Tokenizer]\nPrivate = false\nOrder   = [:type, :function]"
 },
 
 {
@@ -433,11 +433,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "internals/#Module-Tokenizer-1",
+    "location": "internals/#Module-Markovify.Tokenizer-1",
     "page": "Interní symboly (EN)",
-    "title": "Module Tokenizer",
+    "title": "Module Markovify.Tokenizer",
     "category": "section",
-    "text": "The following are the private symbols from the module Tokenizer.Modules = [Tokenizer]\nPublic = false\nOrder   = [:constant, :type, :function]"
+    "text": "The following are the private symbols from the module Markovify.Tokenizer.Modules = [Tokenizer]\nPublic = false\nOrder   = [:constant, :type, :function]"
 },
 
 ]}
